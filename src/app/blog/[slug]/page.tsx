@@ -135,6 +135,19 @@ export default async function BlogPage({ params }: BlogPageProps) {
       notFound();
     }
 
+    // デバッグ用に記事データの構造をログ出力
+    if (typeof window === 'undefined' && slug === 'marker-test-post') {
+      console.log('Post data structure:', JSON.stringify({
+        hasKeyPoint: !!post.keyPoint,
+        keyPointType: typeof post.keyPoint,
+        hasFaq: !!post.faq,
+        faqType: typeof post.faq,
+        faqIsArray: Array.isArray(post.faq),
+        tagsType: typeof post.tags,
+        tagsIsArray: Array.isArray(post.tags)
+      }));
+    }
+
     // mainImageの処理
     const processedPost = { ...post };
     if (post.mainImage && typeof post.mainImage === 'object') {
@@ -151,8 +164,8 @@ export default async function BlogPage({ params }: BlogPageProps) {
           <ArticleJsonLd
             title={processedPost.title || 'Blog Post'}
             description={processedPost.excerpt || processedPost.tldr || ''}
-            image={processedPost.mainImage}
-            publishedAt={processedPost.publishedAt}
+            image={processedPost.mainImage ? undefined : undefined}
+            publishedAt={processedPost.publishedAt || new Date().toISOString()}
             author={processedPost.author?.name}
             url={`https://cafe-kinesi.com/blog/${slug}`}
           />
