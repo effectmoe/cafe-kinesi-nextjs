@@ -37,6 +37,7 @@ export default {
       type: 'image',
       options: {
         hotspot: true,
+        metadata: ['dimensions'], // メタデータを最小限に
       },
       validation: (Rule: any) => Rule.required(),
     },
@@ -50,15 +51,9 @@ export default {
           type: 'image',
           options: {
             hotspot: true,
-            metadata: ['blurhash', 'lqip', 'palette', 'dimensions'],
+            metadata: ['dimensions'], // メタデータを最小限に
           },
           fields: [
-            {
-              name: 'caption',
-              title: 'キャプション',
-              type: 'string',
-              description: '画像の説明（オプション）',
-            },
             {
               name: 'alt',
               title: '代替テキスト',
@@ -70,7 +65,7 @@ export default {
         },
       ],
       options: {
-        layout: 'grid',
+        layout: 'list', // grid → list で軽量化
       },
     },
     {
@@ -91,20 +86,21 @@ export default {
       description: '記事内容の3行まとめ（忙しい読者向けに記事詳細ページの冒頭に表示）',
       validation: (Rule: any) => Rule.max(300),
     },
-    {
-      name: 'additionalImages',
-      title: '追加画像（シンプル）',
-      type: 'array',
-      description: 'シンプルに画像を追加（説明不要の場合）',
-      of: [
-        {
-          type: 'image',
-          options: {
-            hotspot: true,
-          },
-        },
-      ],
-    },
+    // 追加画像（軽量化のため削除）
+    // {
+    //   name: 'additionalImages',
+    //   title: '追加画像（シンプル）',
+    //   type: 'array',
+    //   description: 'シンプルに画像を追加（説明不要の場合）',
+    //   of: [
+    //     {
+    //       type: 'image',
+    //       options: {
+    //         hotspot: true,
+    //       },
+    //     },
+    //   ],
+    // },
     {
       name: 'content',
       title: '本文',
@@ -176,48 +172,57 @@ export default {
               name: 'question',
               title: '質問',
               type: 'string',
-              validation: (Rule: any) => Rule.required().min(1).max(200),
+              validation: (Rule: any) => Rule.required().max(200),
             },
             {
               name: 'answer',
               title: '回答',
               type: 'text',
-              rows: 3,
-              validation: (Rule: any) => Rule.required().min(1).max(1000),
+              rows: 2, // 行数削減
+              validation: (Rule: any) => Rule.required().max(500), // 文字数制限
             },
           ],
           preview: {
             select: {
-              title: 'question',
-              subtitle: 'answer'
+              title: 'question'
+            },
+            prepare({title}) {
+              return {
+                title: title || 'FAQ項目',
+                subtitle: 'Q&A'
+              }
             }
           }
         }
-      ]
-    },
-    {
-      name: 'contentOrder',
-      title: 'コンテンツ表示順序',
-      type: 'array',
-      description: 'ページ上でのコンテンツの表示順序を設定（ドラッグで並び替え可能）',
-      of: [
-        {
-          type: 'string',
-          options: {
-            list: [
-              {title: 'TL;DR（要約）', value: 'tldr'},
-              {title: '目次', value: 'toc'},
-              {title: '本文', value: 'content'},
-              {title: 'FAQ', value: 'faq'},
-              {title: '重要ポイント', value: 'keyPoint'},
-              {title: 'まとめ', value: 'summary'},
-              {title: '関連記事', value: 'related'}
-            ]
-          }
-        }
       ],
-      initialValue: ['tldr', 'toc', 'content', 'keyPoint', 'summary', 'faq', 'related']
+      options: {
+        sortable: false // ソート機能無効化
+      }
     },
+    // コンテンツ表示順序（軽量化のためコメントアウト）
+    // {
+    //   name: 'contentOrder',
+    //   title: 'コンテンツ表示順序',
+    //   type: 'array',
+    //   description: 'ページ上でのコンテンツの表示順序を設定（ドラッグで並び替え可能）',
+    //   of: [
+    //     {
+    //       type: 'string',
+    //       options: {
+    //         list: [
+    //           {title: 'TL;DR（要約）', value: 'tldr'},
+    //           {title: '目次', value: 'toc'},
+    //           {title: '本文', value: 'content'},
+    //           {title: 'FAQ', value: 'faq'},
+    //           {title: '重要ポイント', value: 'keyPoint'},
+    //           {title: 'まとめ', value: 'summary'},
+    //           {title: '関連記事', value: 'related'}
+    //         ]
+    //       }
+    //     }
+    //   ],
+    //   initialValue: ['tldr', 'toc', 'content', 'keyPoint', 'summary', 'faq', 'related']
+    // },
     {
       name: 'category',
       title: 'カテゴリー',

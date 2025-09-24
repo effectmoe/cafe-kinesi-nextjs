@@ -15,7 +15,10 @@ export default defineConfig({
   dataset,
 
   plugins: [
-    structureTool(),
+    structureTool({
+      // 構造化表示の最適化
+      defaultDocumentNode: () => null, // 不要なプレビューを無効
+    }),
     presentationTool({
       previewUrl: {
         origin: 'https://cafe-kinesi-nextjs.vercel.app',
@@ -36,11 +39,19 @@ export default defineConfig({
         ])
       }
     }),
-    visionTool()
+    // Vision Toolは開発時のみ有効化
+    ...(process.env.NODE_ENV === 'development' ? [visionTool()] : [])
   ],
 
   schema: {
     types: schemaTypes,
+  },
+
+  // パフォーマンス最適化
+  studio: {
+    components: {
+      // 軽量化設定
+    }
   },
 
   // デフォルトのパブリッシュアクションを有効化
@@ -56,4 +67,10 @@ export default defineConfig({
     projectId,
     dataset,
   },
+
+  // パフォーマンス設定
+  useCdn: true, // CDN使用でロード高速化
+
+  // 開発環境でのデバッグ無効化
+  debug: false,
 })
