@@ -49,22 +49,13 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
 export default async function BlogPage({ params }: BlogPageProps) {
   try {
     const { slug } = await params;
-    console.log(`[DEBUG] Fetching blog post with slug: ${slug}`);
 
     // Sanityから記事データを取得
     const post = await client.fetch(BLOG_POST_BY_SLUG_QUERY, { slug });
 
     if (!post) {
-      console.log(`[DEBUG] Post not found for slug: ${slug}`);
       notFound();
     }
-
-    console.log(`[DEBUG] Post found:`, {
-      title: post.title,
-      slug: post.slug,
-      hasExcerpt: !!post.excerpt,
-      hasContent: !!post.content
-    });
 
     return (
       <div className="min-h-screen bg-white">
@@ -83,8 +74,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
       </div>
     );
   } catch (error) {
-    console.error('[DEBUG] Error in BlogPage:', error);
-    console.error('[DEBUG] Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+    console.error('ブログページ生成エラー:', error);
     notFound();
   }
 }

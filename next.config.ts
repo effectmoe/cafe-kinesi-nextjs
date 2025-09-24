@@ -71,6 +71,11 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
   },
 
+  // リンクプリロードの最適化
+  async redirects() {
+    return [];
+  },
+
   // バンドル分析（開発時のみ）
   // ...(process.env.ANALYZE === 'true' && {
   //   webpack: async (config, { isServer }) => {
