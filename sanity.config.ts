@@ -18,10 +18,11 @@ export default defineConfig({
     structureTool(),
     presentationTool({
       previewUrl: {
+        origin: 'https://cafe-kinesi-nextjs.vercel.app',
         previewMode: {
-          enable: 'https://cafe-kinesi-nextjs.vercel.app/api/enable-draft',
-        }
-      }
+          enable: '/api/enable-draft',
+        },
+      },
     }),
     visionTool()
   ],
@@ -37,11 +38,30 @@ export default defineConfig({
     }
   },
 
-  // デフォルトのパブリッシュアクションとプレビューを有効化
+  // ドキュメントアクション - プロダクションプレビューを有効化
   document: {
-    actions: (prev, context) => {
-      // すべてのドキュメントタイプでプレビューアクションを有効化
+    actions: (prev, {schemaType}) => {
+      // プレビューボタンを表示
       return prev
+    },
+    productionUrl: async (prev, context) => {
+      const {document} = context
+
+      if (document._type === 'blogPost') {
+        const slug = (document.slug as any)?.current
+        if (slug) {
+          return `https://cafe-kinesi-nextjs.vercel.app/blog/${slug}`
+        }
+      }
+
+      if (document._type === 'news') {
+        const slug = (document.slug as any)?.current
+        if (slug) {
+          return `https://cafe-kinesi-nextjs.vercel.app/news/${slug}`
+        }
+      }
+
+      return null
     }
   },
 
