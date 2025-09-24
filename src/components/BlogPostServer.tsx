@@ -71,14 +71,14 @@ const BlogPostServer = ({ post }: BlogPostProps) => {
                     {post.category}
                   </span>
                 )}
-                {post.tags && (
-                  Array.isArray(post.tags)
-                    ? post.tags.map((tag: string) => (
-                        <span key={tag} className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">
+                {post.tags && post.tags !== null && (
+                  Array.isArray(post.tags) && post.tags.length > 0
+                    ? post.tags.map((tag: string, index: number) => (
+                        <span key={`${tag}-${index}`} className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">
                           {tag}
                         </span>
                       ))
-                    : typeof post.tags === 'string'
+                    : typeof post.tags === 'string' && post.tags.trim() !== ''
                     ? (
                         <span className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">
                           {post.tags}

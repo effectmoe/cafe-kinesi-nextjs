@@ -162,13 +162,16 @@ export default async function BlogPage({ params }: BlogPageProps) {
       }
     }
 
-    // tagsの正規化（オブジェクトの場合は配列に変換）
-    if (processedPost.tags && !Array.isArray(processedPost.tags)) {
+    // tagsの正規化（オブジェクトの場合は配列に変換、nullの場合は空配列）
+    if (!processedPost.tags || processedPost.tags === null) {
+      processedPost.tags = [];
+    } else if (!Array.isArray(processedPost.tags)) {
       if (typeof processedPost.tags === 'string') {
         processedPost.tags = [processedPost.tags];
       } else if (typeof processedPost.tags === 'object') {
         // オブジェクトの値を配列に変換
-        processedPost.tags = Object.values(processedPost.tags).filter(tag => typeof tag === 'string');
+        const values = Object.values(processedPost.tags).filter(tag => typeof tag === 'string');
+        processedPost.tags = values.length > 0 ? values : [];
       }
     }
 
