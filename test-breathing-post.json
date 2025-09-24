@@ -1,0 +1,277 @@
+{
+  "_id": "breathing-stress-relief",
+  "author": null,
+  "category": "ウェルネス",
+  "content": [
+    {
+      "_key": "block1",
+      "_type": "block",
+      "children": [
+        {
+          "_key": "span1",
+          "_type": "span",
+          "marks": [],
+          "text": "なぜ呼吸法が効果的なのか"
+        }
+      ],
+      "markDefs": [],
+      "style": "h2"
+    },
+    {
+      "_key": "block2",
+      "_type": "block",
+      "children": [
+        {
+          "_key": "span2",
+          "_type": "span",
+          "marks": [],
+          "text": "私たちの呼吸は、自律神経系と密接に関連しています。深くゆったりとした呼吸は副交感神経を活性化し、リラックス状態を促進します。逆に、浅く速い呼吸は交感神経を刺激し、ストレス反応を引き起こします。"
+        }
+      ],
+      "markDefs": [],
+      "style": "normal"
+    },
+    {
+      "_key": "block3",
+      "_type": "block",
+      "children": [
+        {
+          "_key": "span3",
+          "_type": "span",
+          "marks": [],
+          "text": "意識的な呼吸法を実践することで、以下の効果が期待できます："
+        }
+      ],
+      "markDefs": [],
+      "style": "normal"
+    },
+    {
+      "_key": "block4",
+      "_type": "block",
+      "children": [
+        {
+          "_key": "span4",
+          "_type": "span",
+          "marks": [],
+          "text": "• 血圧の低下"
+        }
+      ],
+      "markDefs": [],
+      "style": "normal"
+    },
+    {
+      "_key": "block4a",
+      "_type": "block",
+      "children": [
+        {
+          "_key": "span4a",
+          "_type": "span",
+          "marks": [],
+          "text": "• 心拍数の安定"
+        }
+      ],
+      "markDefs": [],
+      "style": "normal"
+    },
+    {
+      "_key": "block4b",
+      "_type": "block",
+      "children": [
+        {
+          "_key": "span4b",
+          "_type": "span",
+          "marks": [],
+          "text": "• ストレスホルモンの減少"
+        }
+      ],
+      "markDefs": [],
+      "style": "normal"
+    },
+    {
+      "_key": "block4c",
+      "_type": "block",
+      "children": [
+        {
+          "_key": "span4c",
+          "_type": "span",
+          "marks": [],
+          "text": "• 集中力の向上"
+        }
+      ],
+      "markDefs": [],
+      "style": "normal"
+    },
+    {
+      "_key": "block4d",
+      "_type": "block",
+      "children": [
+        {
+          "_key": "span4d",
+          "_type": "span",
+          "marks": [],
+          "text": "• 不安感の軽減"
+        }
+      ],
+      "markDefs": [],
+      "style": "normal"
+    },
+    {
+      "_key": "block5",
+      "_type": "block",
+      "children": [
+        {
+          "_key": "span5",
+          "_type": "span",
+          "marks": [],
+          "text": "基本的な腹式呼吸法"
+        }
+      ],
+      "markDefs": [],
+      "style": "h2"
+    },
+    {
+      "_key": "block6",
+      "_type": "block",
+      "children": [
+        {
+          "_key": "span6",
+          "_type": "span",
+          "marks": [],
+          "text": "腹式呼吸は最も基本的で効果的な呼吸法です。以下の手順で実践してみましょう："
+        }
+      ],
+      "markDefs": [],
+      "style": "normal"
+    },
+    {
+      "_key": "block7",
+      "_type": "block",
+      "children": [
+        {
+          "_key": "span7",
+          "_type": "span",
+          "marks": [],
+          "text": "1. 快適な姿勢で座るか横になります"
+        }
+      ],
+      "markDefs": [],
+      "style": "normal"
+    },
+    {
+      "_key": "block7a",
+      "_type": "block",
+      "children": [
+        {
+          "_key": "span7a",
+          "_type": "span",
+          "marks": [],
+          "text": "2. 片手を胸に、もう片手をお腹に置きます"
+        }
+      ],
+      "markDefs": [],
+      "style": "normal"
+    },
+    {
+      "_key": "block7b",
+      "_type": "block",
+      "children": [
+        {
+          "_key": "span7b",
+          "_type": "span",
+          "marks": [],
+          "text": "3. 鼻からゆっくりと息を吸い、お腹を膨らませます（4秒）"
+        }
+      ],
+      "markDefs": [],
+      "style": "normal"
+    },
+    {
+      "_key": "block7c",
+      "_type": "block",
+      "children": [
+        {
+          "_key": "span7c",
+          "_type": "span",
+          "marks": [],
+          "text": "4. 少し息を止めます（2秒）"
+        }
+      ],
+      "markDefs": [],
+      "style": "normal"
+    },
+    {
+      "_key": "block7d",
+      "_type": "block",
+      "children": [
+        {
+          "_key": "span7d",
+          "_type": "span",
+          "marks": [],
+          "text": "5. 口からゆっくりと息を吐き、お腹をへこませます（6秒）"
+        }
+      ],
+      "markDefs": [],
+      "style": "normal"
+    },
+    {
+      "_key": "block8",
+      "_type": "block",
+      "children": [
+        {
+          "_key": "span8",
+          "_type": "span",
+          "marks": [],
+          "text": "4-7-8呼吸法"
+        }
+      ],
+      "markDefs": [],
+      "style": "h2"
+    },
+    {
+      "_key": "block9",
+      "_type": "block",
+      "children": [
+        {
+          "_key": "span9",
+          "_type": "span",
+          "marks": [],
+          "text": "アンドリュー・ワイル博士が推奨する4-7-8呼吸法は、不安やストレスを素早く軽減するのに効果的です。"
+        }
+      ],
+      "markDefs": [],
+      "style": "normal"
+    }
+  ],
+  "contentOrder": null,
+  "excerpt": "深呼吸は最もシンプルで効果的なストレス解消法です。正しい呼吸法を身につけることで、心身のバランスを整えましょう。",
+  "faq": [
+    {
+      "_key": "faq1",
+      "answer": "朝起きた直後と就寝前が特におすすめです。また、ストレスを感じた時にすぐに実践することで、即座にリラックス効果を得られます。",
+      "question": "呼吸法はいつ行うのが最も効果的ですか？"
+    },
+    {
+      "_key": "faq2",
+      "answer": "個人差はありますが、多くの人は実践直後から心拍数の低下や気分の改善を感じます。",
+      "question": "呼吸法の効果はどのくらいで感じられますか？"
+    }
+  ],
+  "keyPoint": {
+    "content": "呼吸法は継続することで効果を発揮します。まずは1日5分から始め、徐々に時間を延ばしていきましょう。",
+    "title": "毎日5分から始めましょう"
+  },
+  "mainImage": null,
+  "publishedAt": "2025-09-24T13:33:41.704Z",
+  "slug": {
+    "current": "breathing-stress-relief"
+  },
+  "summary": "呼吸法は誰でも簡単に実践できる、効果的なストレス管理ツールです。腹式呼吸や4-7-8呼吸法などの基本的なテクニックを身につけることで、日常生活の質を大きく改善できます。",
+  "tags": [
+    "呼吸法",
+    "ストレス解消",
+    "リラックス",
+    "瞑想"
+  ],
+  "title": "呼吸法で日常のストレスを解放",
+  "tldr": "深呼吸と瞑想的な呼吸法を使って、日々のストレスを軽減し、心身のバランスを整える方法を紹介します。"
+}
