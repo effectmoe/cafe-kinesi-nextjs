@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { urlFor } from '@/lib/sanity';
 
 interface BlogPostProps {
   post: any;
@@ -23,7 +24,7 @@ const BlogPostServer = ({ post }: BlogPostProps) => {
               {post.mainImage && (
                 <div className="mb-8">
                   <Image
-                    src={post.mainImage}
+                    src={urlFor(post.mainImage).width(800).height(400).url()}
                     alt={post.title}
                     width={800}
                     height={400}
