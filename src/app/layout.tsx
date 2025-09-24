@@ -8,6 +8,8 @@ import { Toaster as Sonner } from '@/components/ui/sonner'
 import { ReactQueryProvider } from '@/components/providers/ReactQueryProvider'
 import { Analytics } from './analytics'
 import { WebVitals } from './reportWebVitals'
+import { VercelAnalytics } from './vercel-analytics'
+import { VercelSpeedInsights } from './speed-insights'
 
 // フォント最適化設定
 const notoSansJP = Noto_Sans_JP({
@@ -133,6 +135,8 @@ export default function RootLayout({
         </ReactQueryProvider>
         <Analytics />
         <WebVitals />
+        <VercelAnalytics />
+        <VercelSpeedInsights />
       </body>
     </html>
   )
