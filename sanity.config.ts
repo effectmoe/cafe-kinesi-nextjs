@@ -19,7 +19,7 @@ export default defineConfig({
     structureTool({
       defaultDocumentNode,
     }),
-    visionTool()
+    // visionToolは重いので削除
   ],
 
   schema: {
@@ -65,18 +65,5 @@ export default defineConfig({
   },
 
   // パフォーマンス設定
-  useCdn: true, // CDN使用でロード高速化
-
-  // 開発環境でのデバッグ無効化
-  debug: false,
-
-  // トークン設定（パブリッシュ機能に必要）
-  token: process.env.SANITY_API_TOKEN,
-
-  // フォーム設定
-  form: {
-    image: {
-      directUploads: true, // 直接アップロードを有効化
-    },
-  },
+  useCdn: false, // CDNを無効化（リアルタイム更新のため）
 })

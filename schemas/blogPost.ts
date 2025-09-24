@@ -75,47 +75,28 @@ export default defineType({
       name: 'mainImage',
       title: 'メイン画像',
       type: 'image',
-      description: '記事のメイン画像（オプション）',
-      options: {
-        hotspot: true,
-      },
-      // 必須ではなくオプションに変更
     },
     {
       name: 'gallery',
       title: 'ギャラリー画像',
       type: 'array',
-      description: '複数の画像を追加できます（スライドショー表示用）',
       of: [
         {
           type: 'image',
-          options: {
-            hotspot: true,
-          },
           fields: [
             {
               name: 'alt',
               title: '代替テキスト',
               type: 'string',
-              description: 'SEOとアクセシビリティのための説明',
-              validation: (Rule: any) => Rule.required(),
             },
           ],
         },
       ],
-      options: {
-        layout: 'grid',
-      },
     },
     {
       name: 'ogImage',
       title: 'OGP画像',
       type: 'image',
-      description: 'SNSシェア時に表示される画像（1200x630px推奨）',
-      options: {
-        hotspot: true,
-        storeOriginalFilename: false,
-      },
     },
     {
       name: 'tldr',
