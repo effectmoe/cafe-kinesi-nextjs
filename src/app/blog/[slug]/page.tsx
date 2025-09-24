@@ -147,14 +147,19 @@ export default async function BlogPage({ params }: BlogPageProps) {
         faqLength: Array.isArray(post.faq) ? post.faq.length : 0,
         tagsType: typeof post.tags,
         tagsIsArray: Array.isArray(post.tags),
-        tagsValue: post.tags
+        tagsValue: post.tags,
+        tagsIsNull: post.tags === null,
+        tagsIsUndefined: post.tags === undefined
       }, null, 2));
     }
+
+    console.log('Starting data normalization for:', slug);
 
     // データの正規化と処理
     const processedPost = { ...post };
 
     // mainImageの処理
+    console.log('Processing mainImage...');
     if (post.mainImage && typeof post.mainImage === 'object') {
       // mainImageが適切な形式か確認
       if (!post.mainImage._type || !post.mainImage.asset) {
@@ -163,40 +168,61 @@ export default async function BlogPage({ params }: BlogPageProps) {
     }
 
     // tagsの正規化（オブジェクトの場合は配列に変換、nullの場合は空配列）
-    if (!processedPost.tags || processedPost.tags === null) {
+    console.log('Processing tags...');
+    if (!processedPost.tags || processedPost.tags === null || processedPost.tags === undefined) {
+      console.log('Tags is null/undefined, setting to empty array');
       processedPost.tags = [];
     } else if (!Array.isArray(processedPost.tags)) {
       if (typeof processedPost.tags === 'string') {
         processedPost.tags = [processedPost.tags];
-      } else if (typeof processedPost.tags === 'object') {
-        // オブジェクトの値を配列に変換
-        const values = Object.values(processedPost.tags).filter(tag => typeof tag === 'string');
-        processedPost.tags = values.length > 0 ? values : [];
+      } else if (typeof processedPost.tags === 'object' && processedPost.tags !== null) {
+        // オブジェクトの値を配列に変換（nullチェック済み）
+        try {
+          const values = Object.values(processedPost.tags).filter(tag => typeof tag === 'string');
+          processedPost.tags = values.length > 0 ? values : [];
+        } catch (e) {
+          console.warn('Failed to convert tags object to array:', e);
+          processedPost.tags = [];
+        }
+      } else {
+        processedPost.tags = [];
       }
     }
 
     // faqの正規化
+    console.log('Processing FAQ...');
     if (processedPost.faq && !Array.isArray(processedPost.faq)) {
+      console.log('FAQ is not array, setting to empty array');
       processedPost.faq = [];
     }
 
-    return (
-      <div className="min-h-screen bg-white">
-        <Header />
-        <main>
-          <ArticleJsonLd
-            title={processedPost.title || 'Blog Post'}
-            description={processedPost.excerpt || processedPost.tldr || ''}
-            image={processedPost.mainImage ? undefined : undefined}
-            publishedAt={processedPost.publishedAt || new Date().toISOString()}
-            author={processedPost.author?.name}
-            url={`https://cafe-kinesi.com/blog/${slug}`}
-          />
-          <BlogPostServer post={processedPost} />
-        </main>
+    console.log('Data normalization complete for:', slug);
+
+    try {
+      console.log('Rendering components for:', slug);
+      return (
+        <div className="min-h-screen bg-white">
+          <Header />
+          <main>
+            {console.log('Rendering ArticleJsonLd...')}
+            <ArticleJsonLd
+              title={processedPost.title || 'Blog Post'}
+              description={processedPost.excerpt || processedPost.tldr || ''}
+              image={processedPost.mainImage ? undefined : undefined}
+              publishedAt={processedPost.publishedAt || new Date().toISOString()}
+              author={processedPost.author?.name}
+              url={`https://cafe-kinesi.com/blog/${slug}`}
+            />
+            {console.log('Rendering BlogPostServer...')}
+            <BlogPostServer post={processedPost} />
+          </main>
         <Footer />
       </div>
     );
+    } catch (renderError) {
+      console.error('Error during rendering:', renderError);
+      throw renderError;
+    }
   } catch (error) {
     console.error('ブログページ生成エラー:', error);
     console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace');
