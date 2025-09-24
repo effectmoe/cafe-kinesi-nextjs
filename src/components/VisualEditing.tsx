@@ -52,11 +52,11 @@ export default function LiveVisualEditing() {
     >
       📝 Sanity Visual Editing有効 - リアルタイム編集可能
       <a
-        href="/api/disable-draft"
+        href="/api/draft/disable"
         style={{ color: 'white', textDecoration: 'underline', marginLeft: '8px' }}
         onClick={(e) => {
           e.preventDefault()
-          router.push('/api/disable-draft')
+          router.push('/api/draft/disable')
         }}
       >
         プレビューを終了

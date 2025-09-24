@@ -6,6 +6,9 @@ export default {
   // パブリッシュ機能を明示的に有効化
   liveEdit: false, // ドラフト機能を使用
 
+  // プレビュー設定
+  __experimental_omnisearch_visibility: true,
+
   // プレビューURL設定
   preview: {
     select: {

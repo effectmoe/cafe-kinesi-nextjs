@@ -1,72 +1,71 @@
 import { draftMode } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { NextRequest } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
   try {
-    console.log('🔍 Draft API called with URL:', request.url)
+    console.log('Draft API called:', request.url)
 
-    const url = new URL(request.url)
-    const searchParams = url.searchParams
-
-    // 全パラメータをログ出力
-    const allParams: Record<string, string> = {}
-    for (const [key, value] of searchParams.entries()) {
-      allParams[key] = value
-    }
-    console.log('🔍 All search parameters:', allParams)
-
-    // パラメータの取得
-    const slug = searchParams.get('slug')
-    const pathname = searchParams.get('pathname') || searchParams.get('path')
-    const type = searchParams.get('type')
-
-    console.log('🔍 Extracted parameters:', { slug, pathname, type })
+    const { searchParams } = new URL(request.url)
+    console.log('Search params:', Object.fromEntries(searchParams.entries()))
 
     // ドラフトモードを有効化
-    try {
-      const draft = await draftMode()
-      draft.enable()
-      console.log('✅ Draft mode enabled')
-    } catch (draftError) {
-      console.error('❌ Failed to enable draft mode:', draftError)
-      throw draftError
-    }
+    const draft = await draftMode()
+    draft.enable()
+    console.log('Draft mode enabled')
 
-    // リダイレクト先の決定
-    let redirectTo = '/'
+    // パラメータからリダイレクト先を判定
+    const pathname = searchParams.get('sanity-preview-pathname') ||
+                    searchParams.get('pathname') ||
+                    searchParams.get('path')
+
+    const slug = searchParams.get('slug')
+    const documentType = searchParams.get('type')
+
+    console.log('Redirect params:', { pathname, slug, documentType })
+
+    // リダイレクト先を決定
+    let redirectUrl = '/'
 
     if (pathname) {
-      redirectTo = pathname
-      console.log('🎯 Using pathname for redirect')
+      // pathname が指定されている場合はそのまま使用
+      redirectUrl = pathname.startsWith('/') ? pathname : `/${pathname}`
+      console.log('Using pathname:', redirectUrl)
+    } else if (slug && documentType === 'blogPost') {
+      // ブログ記事の場合
+      redirectUrl = `/blog/${slug}`
+      console.log('Blog post redirect:', redirectUrl)
+    } else if (slug && documentType === 'news') {
+      // ニュース記事の場合
+      redirectUrl = `/news/${slug}`
+      console.log('News redirect:', redirectUrl)
     } else if (slug) {
-      if (type === 'blogPost') {
-        redirectTo = `/blog/${slug}`
-        console.log('🎯 Determined blogPost route')
-      } else if (type === 'news') {
-        redirectTo = `/news/${slug}`
-        console.log('🎯 Determined news route')
-      } else {
-        // typeが不明な場合はblogを仮定
-        redirectTo = `/blog/${slug}`
-        console.log('🎯 Fallback to blog route')
-      }
+      // スラッグのみの場合はブログとして扱う
+      redirectUrl = `/blog/${slug}`
+      console.log('Default blog redirect:', redirectUrl)
     }
 
-    console.log('🚀 Redirecting to:', redirectTo)
-    redirect(redirectTo)
+    console.log('Final redirect URL:', redirectUrl)
+    redirect(redirectUrl)
 
   } catch (error) {
-    console.error('❌ Draft API error:', error)
+    console.error('Draft API error:', error)
 
-    // エラーが発生した場合は最低限のドラフト機能を提供
-    try {
-      const draft = await draftMode()
-      draft.enable()
-    } catch (draftError) {
-      console.error('❌ Failed to enable draft mode in error handler:', draftError)
-    }
-
-    redirect('/')
+    // エラーの場合はJSONレスポンス
+    return NextResponse.json(
+      {
+        error: 'Failed to enable draft mode',
+        details: String(error),
+        message: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined
+      },
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache'
+        }
+      }
+    )
   }
 }

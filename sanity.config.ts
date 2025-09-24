@@ -17,7 +17,36 @@ export default defineConfig({
   plugins: [
     structureTool(),
     presentationTool({
-      previewUrl: 'https://cafe-kinesi-nextjs.vercel.app/api/draft'
+      previewUrl: {
+        origin: 'https://cafe-kinesi-nextjs.vercel.app',
+        previewMode: {
+          enable: '/api/draft',
+          disable: '/api/draft/disable'
+        }
+      },
+      resolve: {
+        mainDocuments: (document) => {
+          console.log('Resolving document:', document._type, document.slug?.current)
+
+          if (document._type === 'blogPost' && document.slug?.current) {
+            return {
+              id: document._id,
+              href: `/blog/${document.slug.current}`,
+              type: 'web'
+            }
+          }
+
+          if (document._type === 'news' && document.slug?.current) {
+            return {
+              id: document._id,
+              href: `/news/${document.slug.current}`,
+              type: 'web'
+            }
+          }
+
+          return null
+        }
+      }
     }),
     visionTool()
   ],
@@ -36,6 +65,7 @@ export default defineConfig({
   // デフォルトのパブリッシュアクションとプレビューを有効化
   document: {
     actions: (prev, context) => {
+      // すべてのドキュメントタイプでプレビューアクションを有効化
       return prev
     }
   },

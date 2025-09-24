@@ -2,6 +2,9 @@ export default {
   name: 'news',
   title: 'お知らせ',
   type: 'document',
+
+  // プレビュー設定
+  __experimental_omnisearch_visibility: true,
   fields: [
     {
       name: 'title',

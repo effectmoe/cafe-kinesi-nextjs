@@ -78,7 +78,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
         {isDraft && (
           <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 text-center">
             プレビューモード - 下書きコンテンツが表示されています
-            <a href="/api/disable-draft" className="ml-2 underline">
+            <a href={`/api/draft/disable?redirect=/blog/${slug}`} className="ml-2 underline">
               プレビューを終了
             </a>
           </div>
