@@ -17,13 +17,7 @@ export default defineConfig({
   plugins: [
     structureTool(),
     presentationTool({
-      previewUrl: {
-        origin: 'https://cafe-kinesi-nextjs.vercel.app',
-        preview: '/',
-        previewMode: {
-          enable: '/api/draft-mode/enable',
-        },
-      },
+      previewUrl: 'https://cafe-kinesi-nextjs.vercel.app/api/draft'
     }),
     visionTool()
   ],
