@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function HomePage() {
+export default async function HomePage() {
   return (
     <div className="min-h-screen bg-white">
       <Header />
