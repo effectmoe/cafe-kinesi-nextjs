@@ -5,6 +5,35 @@ export default {
 
   // パブリッシュ機能を明示的に有効化
   liveEdit: false, // ドラフト機能を使用
+
+  // プレビューURL設定
+  preview: {
+    select: {
+      title: 'title',
+      slug: 'slug.current',
+      author: 'author.name',
+      media: 'mainImage',
+      date: 'publishedAt',
+    },
+    prepare(selection: any) {
+      const {title, slug, author, media, date} = selection || {};
+      let dateFormatted = '未公開';
+
+      if (date) {
+        try {
+          dateFormatted = new Date(date).toLocaleDateString('ja-JP');
+        } catch (error) {
+          dateFormatted = '日付エラー';
+        }
+      }
+
+      return {
+        title: String(title || 'タイトルなし'),
+        subtitle: `${dateFormatted}${author ? ` ・ ${String(author)}` : ''}`,
+        media: media || undefined,
+      };
+    },
+  },
   fields: [
     {
       name: 'title',
@@ -272,33 +301,6 @@ export default {
       to: [{type: 'author'}],
     },
   ],
-  preview: {
-    select: {
-      title: 'title',
-      slug: 'slug.current',
-      author: 'author.name',
-      media: 'mainImage',
-      date: 'publishedAt',
-    },
-    prepare(selection: any) {
-      const {title, slug, author, media, date} = selection || {};
-      let dateFormatted = '未公開';
-
-      if (date) {
-        try {
-          dateFormatted = new Date(date).toLocaleDateString('ja-JP');
-        } catch (error) {
-          dateFormatted = '日付エラー';
-        }
-      }
-
-      return {
-        title: String(title || 'タイトルなし'),
-        subtitle: `${dateFormatted}${author ? ` ・ ${String(author)}` : ''}`,
-        media: media || undefined,
-      };
-    },
-  },
   orderings: [
     {
       title: '公開日（新しい順）',
