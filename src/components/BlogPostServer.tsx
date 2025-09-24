@@ -6,18 +6,20 @@ interface BlogPostProps {
 }
 
 const BlogPostServer = ({ post }: BlogPostProps) => {
-  // 画像URLの安全な生成
-  const getImageSrc = (image: any) => {
-    if (!image) return '/placeholder.svg';
-    try {
-      const url = urlFor(image).width(800).height(400).url();
-      return url || '/placeholder.svg';
-    } catch (error) {
-      console.warn('Error generating image URL:', error);
-      return '/placeholder.svg';
-    }
-  };
-  if (!post) {
+  try {
+    // 画像URLの安全な生成
+    const getImageSrc = (image: any) => {
+      if (!image) return '/placeholder.svg';
+      try {
+        const url = urlFor(image).width(800).height(400).url();
+        return url || '/placeholder.svg';
+      } catch (error) {
+        console.warn('Error generating image URL:', error);
+        return '/placeholder.svg';
+      }
+    };
+
+    if (!post) {
     return (
       <div className="container mx-auto px-4 py-16">
         <div className="text-center">
@@ -71,21 +73,13 @@ const BlogPostServer = ({ post }: BlogPostProps) => {
                     {post.category}
                   </span>
                 )}
-                {post.tags && post.tags !== null && (
-                  Array.isArray(post.tags) && post.tags.length > 0
-                    ? post.tags.map((tag: string, index: number) => (
-                        <span key={`${tag}-${index}`} className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">
-                          {tag}
-                        </span>
-                      ))
-                    : typeof post.tags === 'string' && post.tags.trim() !== ''
-                    ? (
-                        <span className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">
-                          {post.tags}
-                        </span>
-                      )
-                    : null
-                )}
+                {post.tags && Array.isArray(post.tags) && post.tags.length > 0 &&
+                  post.tags.map((tag: string, index: number) => (
+                    <span key={`tag-${index}`} className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">
+                      {tag}
+                    </span>
+                  ))
+                }
               </div>
 
               {/* メインコンテンツ */}
@@ -149,7 +143,18 @@ const BlogPostServer = ({ post }: BlogPostProps) => {
             </div>
           </div>
         </article>
-  );
+    );
+  } catch (error) {
+    console.error('Error in BlogPostServer component:', error);
+    return (
+      <div className="container mx-auto px-4 py-16">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">エラーが発生しました</h1>
+          <p>記事の表示中にエラーが発生しました。</p>
+        </div>
+      </div>
+    );
+  }
 };
 
 export default BlogPostServer;

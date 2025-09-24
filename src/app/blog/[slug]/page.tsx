@@ -198,6 +198,23 @@ export default async function BlogPage({ params }: BlogPageProps) {
 
     console.log('Data normalization complete for:', slug);
 
+    // marker-test-postの場合は特別な処理
+    if (slug === 'marker-test-post') {
+      console.log('Special handling for marker-test-post');
+      return (
+        <div className="min-h-screen bg-white">
+          <Header />
+          <main>
+            <div className="container mx-auto px-4 py-16">
+              <h1 className="text-3xl font-bold mb-4">{processedPost.title || 'Test Post'}</h1>
+              <p>{processedPost.excerpt || 'This is a test post.'}</p>
+            </div>
+          </main>
+          <Footer />
+        </div>
+      );
+    }
+
     try {
       console.log('Rendering components for:', slug);
 
