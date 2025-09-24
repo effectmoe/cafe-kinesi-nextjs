@@ -19,34 +19,11 @@ export default defineConfig({
     presentationTool({
       previewUrl: {
         origin: 'https://cafe-kinesi-nextjs.vercel.app',
+        preview: '/',
         previewMode: {
-          enable: '/api/draft',
-          disable: '/api/draft/disable'
-        }
+          enable: '/api/draft-mode/enable',
+        },
       },
-      resolve: {
-        mainDocuments: (document) => {
-          console.log('Resolving document:', document._type, document.slug?.current)
-
-          if (document._type === 'blogPost' && document.slug?.current) {
-            return {
-              id: document._id,
-              href: `/blog/${document.slug.current}`,
-              type: 'web'
-            }
-          }
-
-          if (document._type === 'news' && document.slug?.current) {
-            return {
-              id: document._id,
-              href: `/news/${document.slug.current}`,
-              type: 'web'
-            }
-          }
-
-          return null
-        }
-      }
     }),
     visionTool()
   ],
