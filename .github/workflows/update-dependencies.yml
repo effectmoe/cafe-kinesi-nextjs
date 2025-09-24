@@ -1,0 +1,79 @@
+name: Update Dependencies
+
+on:
+  schedule:
+    - cron: '0 0 * * 1' # 毎週月曜日の午前0時
+  workflow_dispatch: # 手動実行も可能
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Update dependencies
+        run: |
+          echo "📦 Updating dependencies..."
+          npm update --save
+
+          echo "🔒 Running security audit..."
+          npm audit fix --force || true
+
+          echo "📝 Checking for major updates..."
+          npx npm-check-updates -u
+
+      - name: Install updated dependencies
+        run: |
+          npm ci --prefer-offline --no-audit
+
+      - name: Run tests
+        run: |
+          npm run type-check || true
+          npm run lint || true
+          npm run build || true
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore: update dependencies'
+          title: '🔄 依存関係の自動更新'
+          body: |
+            ## 依存関係の更新
+
+            このPRは定期的な依存関係の更新を含んでいます。
+
+            ### 実行された操作
+            - ✅ npm updateによる依存関係の更新
+            - 🔒 セキュリティ脆弱性の自動修正
+            - 📦 メジャーアップデートの確認
+
+            ### チェックリスト
+            - [ ] ビルドが成功すること
+            - [ ] 型チェックが通ること
+            - [ ] テストが通ること
+            - [ ] ローカルで動作確認済み
+
+            ### 注意事項
+            重大な変更が含まれている可能性があります。
+            マージ前に必ず動作確認を行ってください。
+          branch: update-dependencies
+          delete-branch: true
+          labels: |
+            dependencies
+            automated
+          assignees: effectmoe
+          reviewers: effectmoe

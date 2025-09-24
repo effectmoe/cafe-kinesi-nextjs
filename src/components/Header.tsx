@@ -12,80 +12,109 @@ const Header = () => {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100">
-      <div className="container-custom">
+    <header className="bg-white border-b border-gray-100">
+      <div className="max-w-6xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          {/* ロゴ */}
-          <Link href="/" className="flex items-center space-x-3 group">
-            <Image
-              src={logo}
-              alt="Cafe Kinesi Logo"
-              width={40}
-              height={40}
-              priority
-              className="rounded-full transition-transform duration-300 group-hover:scale-105"
-            />
-            <span className="font-noto-serif text-xl font-bold text-cafe-brown">
-              Cafe Kinesi
-            </span>
+          {/* シンプルなロゴテキスト */}
+          <Link href="/" className="text-2xl font-light text-gray-800 hover:text-gray-600 transition-colors">
+            Cafe Kinesi
           </Link>
 
-          {/* デスクトップナビゲーション */}
+          {/* 右側のナビゲーション - ミニマル */}
           <nav className="hidden md:flex items-center space-x-8">
             <Link
-              href="/"
-              className="text-text-primary hover:text-accent-gold transition-colors duration-300 font-medium"
+              href="/about"
+              className="text-sm text-gray-600 hover:text-gray-900 transition-colors uppercase tracking-wider"
             >
-              ホーム
+              カフェキネシについて
             </Link>
             <Link
-              href="/about"
-              className="text-text-primary hover:text-accent-gold transition-colors duration-300 font-medium"
+              href="/school"
+              className="text-sm text-gray-600 hover:text-gray-900 transition-colors uppercase tracking-wider"
             >
-              About
+              スクール
+            </Link>
+            <Link
+              href="/instructor"
+              className="text-sm text-gray-600 hover:text-gray-900 transition-colors uppercase tracking-wider"
+            >
+              インストラクター
             </Link>
             <Link
               href="/blog"
-              className="text-text-primary hover:text-accent-gold transition-colors duration-300 font-medium"
+              className="text-sm text-gray-600 hover:text-gray-900 transition-colors uppercase tracking-wider"
             >
               ブログ
+            </Link>
+            <Link
+              href="/aroma"
+              className="text-sm text-gray-600 hover:text-gray-900 transition-colors uppercase tracking-wider"
+            >
+              アロマ
+            </Link>
+            <Link
+              href="/member"
+              className="text-sm text-gray-600 hover:text-gray-900 transition-colors uppercase tracking-wider"
+            >
+              メンバー
             </Link>
           </nav>
 
           {/* モバイルメニューボタン */}
           <button
             onClick={toggleMenu}
-            className="md:hidden p-2 text-cafe-brown hover:text-accent-gold transition-colors"
+            className="md:hidden p-2 text-gray-600 hover:text-gray-900 transition-colors"
             aria-label="メニューを開く"
           >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
 
         {/* モバイルメニュー */}
         {isMenuOpen && (
-          <div className="md:hidden absolute top-16 left-0 right-0 bg-white border-b border-gray-100 shadow-lg animate-fadeIn">
-            <nav className="py-4 space-y-4">
-              <Link
-                href="/"
-                className="block px-4 py-2 text-text-primary hover:text-accent-gold hover:bg-cafe-cream/30 transition-all duration-300"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                ホーム
-              </Link>
+          <div className="md:hidden bg-white border-t border-gray-100">
+            <nav className="py-4 space-y-2">
               <Link
                 href="/about"
-                className="block px-4 py-2 text-text-primary hover:text-accent-gold hover:bg-cafe-cream/30 transition-all duration-300"
+                className="block px-4 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all"
                 onClick={() => setIsMenuOpen(false)}
               >
-                About
+                カフェキネシについて
+              </Link>
+              <Link
+                href="/school"
+                className="block px-4 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                スクール
+              </Link>
+              <Link
+                href="/instructor"
+                className="block px-4 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                インストラクター
               </Link>
               <Link
                 href="/blog"
-                className="block px-4 py-2 text-text-primary hover:text-accent-gold hover:bg-cafe-cream/30 transition-all duration-300"
+                className="block px-4 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all"
                 onClick={() => setIsMenuOpen(false)}
               >
                 ブログ
+              </Link>
+              <Link
+                href="/aroma"
+                className="block px-4 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                アロマ
+              </Link>
+              <Link
+                href="/member"
+                className="block px-4 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                メンバー
               </Link>
             </nav>
           </div>

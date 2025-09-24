@@ -1,0 +1,162 @@
+name: Uptime Monitoring
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'  # 15分ごと
+  workflow_dispatch:
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+
+    steps:
+      - name: Check site availability
+        id: health
+        run: |
+          SITE_URL="https://cafekinesi-nextjs.vercel.app"
+          API_HEALTH="${SITE_URL}/api/health"
+
+          echo "🔍 Checking site availability..."
+
+          # メインサイトチェック
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$SITE_URL")
+          RESPONSE_TIME=$(curl -s -o /dev/null -w "%{time_total}" "$SITE_URL")
+
+          echo "Main site status: $HTTP_STATUS"
+          echo "Response time: ${RESPONSE_TIME}s"
+
+          # ヘルスチェックエンドポイント
+          HEALTH_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$API_HEALTH")
+
+          # ステータス判定
+          if [ "$HTTP_STATUS" != "200" ]; then
+            echo "❌ Site is down! Status: $HTTP_STATUS"
+            echo "status=down" >> $GITHUB_OUTPUT
+            echo "http_status=$HTTP_STATUS" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+          if (( $(echo "$RESPONSE_TIME > 5" | bc -l) )); then
+            echo "⚠️ Site is slow! Response time: ${RESPONSE_TIME}s"
+            echo "status=slow" >> $GITHUB_OUTPUT
+            echo "response_time=$RESPONSE_TIME" >> $GITHUB_OUTPUT
+          else
+            echo "✅ Site is healthy"
+            echo "status=up" >> $GITHUB_OUTPUT
+            echo "response_time=$RESPONSE_TIME" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check multiple endpoints
+        id: endpoints
+        run: |
+          declare -a ENDPOINTS=(
+            "/"
+            "/blog"
+            "/about"
+            "/api/health"
+            "/sitemap.xml"
+            "/robots.txt"
+          )
+
+          FAILED_ENDPOINTS=""
+
+          for endpoint in "${ENDPOINTS[@]}"; do
+            URL="https://cafekinesi-nextjs.vercel.app${endpoint}"
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
+
+            if [ "$STATUS" == "200" ] || [ "$STATUS" == "304" ]; then
+              echo "✅ $endpoint: $STATUS"
+            else
+              echo "❌ $endpoint: $STATUS"
+              FAILED_ENDPOINTS="${FAILED_ENDPOINTS}${endpoint} (${STATUS}), "
+            fi
+          done
+
+          if [ -n "$FAILED_ENDPOINTS" ]; then
+            echo "failed_endpoints=$FAILED_ENDPOINTS" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check SSL certificate
+        run: |
+          echo "🔒 Checking SSL certificate..."
+
+          DOMAIN="cafekinesi-nextjs.vercel.app"
+
+          # SSL証明書の有効期限を確認
+          EXPIRY_DATE=$(echo | openssl s_client -servername $DOMAIN -connect $DOMAIN:443 2>/dev/null | openssl x509 -noout -dates | grep notAfter | cut -d= -f2)
+          EXPIRY_TIMESTAMP=$(date -d "$EXPIRY_DATE" +%s)
+          CURRENT_TIMESTAMP=$(date +%s)
+          DAYS_LEFT=$(( ($EXPIRY_TIMESTAMP - $CURRENT_TIMESTAMP) / 86400 ))
+
+          echo "SSL certificate expires in $DAYS_LEFT days"
+
+          if [ $DAYS_LEFT -lt 7 ]; then
+            echo "⚠️ SSL certificate expires soon!"
+            echo "ssl_warning=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create issue if site is down
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const now = new Date().toISOString();
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '🚨 サイトがダウンしています',
+              body: `## アラート
+
+              サイトが応答していません。
+
+              - **URL**: https://cafekinesi-nextjs.vercel.app
+              - **検出時刻**: ${now}
+              - **ステータス**: ${{ steps.health.outputs.http_status || 'Unknown' }}
+              - **失敗エンドポイント**: ${{ steps.endpoints.outputs.failed_endpoints || 'None' }}
+
+              ### 対応手順
+              1. Vercelダッシュボードを確認
+              2. ビルドログを確認
+              3. 環境変数を確認
+              4. 最近のデプロイを確認
+
+              [Vercel Dashboard](https://vercel.com/dashboard)
+              `,
+              labels: ['critical', 'monitoring', 'downtime']
+            });
+
+      - name: Performance metrics logging
+        run: |
+          TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
+
+          cat >> monitoring.log << EOF
+          {
+            "timestamp": "$TIMESTAMP",
+            "status": "${{ steps.health.outputs.status }}",
+            "response_time": "${{ steps.health.outputs.response_time }}",
+            "http_status": "${{ steps.health.outputs.http_status }}",
+            "workflow_run": "${{ github.run_id }}"
+          }
+          EOF
+
+          echo "📊 Metrics logged"
+
+      - name: Notification webhook (optional)
+        if: failure()
+        continue-on-error: true
+        run: |
+          # Slack、Discord、メール通知などのWebhook
+          # WEBHOOK_URL が設定されている場合のみ実行
+          if [ -n "${{ secrets.MONITORING_WEBHOOK_URL }}" ]; then
+            curl -X POST ${{ secrets.MONITORING_WEBHOOK_URL }} \
+              -H 'Content-Type: application/json' \
+              -d '{
+                "text": "🚨 Cafe Kinesi サイトがダウンしています",
+                "status": "${{ steps.health.outputs.status }}",
+                "url": "https://cafekinesi-nextjs.vercel.app"
+              }'
+          fi

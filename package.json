@@ -10,7 +10,13 @@
     "type-check": "tsc --noEmit",
     "lighthouse": "npx lighthouse http://localhost:3000 --view",
     "lighthouse:ci": "npx @lhci/cli@0.14.x autorun",
-    "analyze": "ANALYZE=true next build"
+    "analyze": "ANALYZE=true next build",
+    "maintenance": "./scripts/maintenance.sh",
+    "update:deps": "npm update && npm audit fix",
+    "check:security": "npm audit",
+    "check:updates": "npx npm-check-updates",
+    "clean": "rm -rf .next node_modules/.cache",
+    "clean:full": "rm -rf .next node_modules && npm install"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -57,6 +63,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@next/bundle-analyzer": "^15.5.4",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

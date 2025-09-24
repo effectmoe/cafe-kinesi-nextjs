@@ -72,17 +72,18 @@ const nextConfig: NextConfig = {
   },
 
   // バンドル分析（開発時のみ）
-  ...(process.env.ANALYZE === 'true' && {
-    webpack: (config, { isServer }) => {
-      if (!isServer) {
-        const BundleAnalyzerPlugin = require('@next/bundle-analyzer')({
-          enabled: true,
-        });
-        config.plugins.push(new BundleAnalyzerPlugin());
-      }
-      return config;
-    },
-  }),
+  // ...(process.env.ANALYZE === 'true' && {
+  //   webpack: async (config, { isServer }) => {
+  //     if (!isServer) {
+  //       const BundleAnalyzer = await import('@next/bundle-analyzer');
+  //       const BundleAnalyzerPlugin = BundleAnalyzer.default({
+  //         enabled: true,
+  //       });
+  //       config.plugins.push(new BundleAnalyzerPlugin());
+  //     }
+  //     return config;
+  //   },
+  // }),
 };
 
 export default nextConfig;

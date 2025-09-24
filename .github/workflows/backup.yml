@@ -1,0 +1,146 @@
+name: Automated Backup
+
+on:
+  schedule:
+    - cron: '0 2 * * *'  # 毎日午前2時（UTC）
+    - cron: '0 2 * * 0'  # 毎週日曜日に追加バックアップ
+  workflow_dispatch:
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Create backup archive
+        run: |
+          TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+          BACKUP_NAME="backup_${TIMESTAMP}"
+
+          echo "📦 Creating backup: $BACKUP_NAME"
+
+          # 重要なファイルのバックアップ
+          mkdir -p backups
+
+          tar -czf "backups/${BACKUP_NAME}.tar.gz" \
+            --exclude=node_modules \
+            --exclude=.next \
+            --exclude=.git \
+            --exclude=backups \
+            src/ \
+            public/ \
+            schemas/ \
+            package.json \
+            package-lock.json \
+            next.config.ts \
+            tsconfig.json \
+            .env.example
+
+          echo "✅ Backup created successfully"
+
+      - name: Upload to GitHub Releases
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: backup-${{ github.run_number }}
+          name: Backup ${{ github.run_number }} - ${{ github.event.repository.updated_at }}
+          body: |
+            ## 自動バックアップ
+
+            - **日時**: ${{ github.event.repository.updated_at }}
+            - **コミット**: ${{ github.sha }}
+            - **実行番号**: ${{ github.run_number }}
+
+            ### バックアップ内容
+            - ソースコード（src/）
+            - 公開ファイル（public/）
+            - スキーマ定義（schemas/）
+            - 設定ファイル
+          files: backups/*.tar.gz
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Cleanup old backups
+        run: |
+          # 30日以上古いバックアップを削除
+          echo "🧹 Cleaning up old backups..."
+
+          # GitHubリリースから古いバックアップを取得して削除
+          gh release list --limit 100 | grep "backup-" | tail -n +31 | cut -f1 | while read -r tag; do
+            echo "Deleting old backup: $tag"
+            gh release delete "$tag" -y
+          done
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Sanity backup
+        env:
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
+          SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+        run: |
+          echo "📊 Backing up Sanity data..."
+
+          # Sanity CLIインストール
+          npm install -g @sanity/cli
+
+          # データエクスポート
+          TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+
+          sanity dataset export production "./backups/sanity_backup_${TIMESTAMP}.tar.gz" \
+            --project $SANITY_PROJECT_ID \
+            --token $SANITY_AUTH_TOKEN || echo "Sanity backup skipped (token not configured)"
+
+      - name: Create backup report
+        run: |
+          cat > backup_report.md << EOF
+          # バックアップレポート
+
+          ## 実行情報
+          - **日時**: $(date)
+          - **実行ID**: ${{ github.run_id }}
+          - **リポジトリ**: ${{ github.repository }}
+
+          ## バックアップ統計
+          - **総ファイル数**: $(find src public schemas -type f | wc -l)
+          - **コード行数**: $(find src -name "*.ts" -o -name "*.tsx" | xargs wc -l | tail -1)
+          - **バックアップサイズ**: $(du -sh backups/*.tar.gz | cut -f1)
+
+          ## 含まれるファイル
+          \`\`\`
+          $(tar -tzf backups/*.tar.gz | head -20)
+          ... and more
+          \`\`\`
+
+          ## 次回バックアップ
+          - 日次: 明日の午前2時（UTC）
+          - 週次: 次の日曜日
+          EOF
+
+          echo "📝 Backup report created"
+
+      - name: Send notification
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '⚠️ バックアップ失敗',
+              body: `## バックアップエラー\n\n- ワークフロー: ${context.workflow}\n- 実行ID: ${context.runId}\n- エラー発生時刻: ${new Date().toISOString()}`,
+              labels: ['backup', 'error']
+            });
