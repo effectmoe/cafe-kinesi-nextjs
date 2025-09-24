@@ -3,6 +3,7 @@ import {structureTool} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
 import {presentationTool} from 'sanity/presentation'
 import {schemaTypes} from './schemas'
+import {defaultDocumentNode} from './sanity/structure'
 
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'e4aqw590'
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production'
@@ -15,13 +16,11 @@ export default defineConfig({
   dataset,
 
   plugins: [
-    structureTool(),
+    structureTool({
+      defaultDocumentNode,
+    }),
     presentationTool({
-      previewUrl: {
-        draftMode: {
-          enable: 'https://cafe-kinesi-nextjs.vercel.app/api/enable-draft',
-        }
-      }
+      previewUrl: process.env.SANITY_STUDIO_PREVIEW_URL || 'https://cafe-kinesi-nextjs.vercel.app',
     }),
     visionTool()
   ],
