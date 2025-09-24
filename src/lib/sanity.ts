@@ -70,6 +70,8 @@ export const client = createClient({
   apiVersion,
   useCdn: false, // クライアントサイドでは最新データを取得
   ignoreBrowserTokenWarning: true,
+  token: process.env.NEXT_PUBLIC_SANITY_API_TOKEN,
+  perspective: 'published',
 })
 
 // 後方互換性のため

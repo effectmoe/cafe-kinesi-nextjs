@@ -1,34 +1,28 @@
-'use client';
-
 import BlogCard from './BlogCard';
-import { useSanityData } from '@/hooks/useSanityData';
+import { client } from '@/lib/sanity';
 import { BLOG_POSTS_QUERY } from '@/lib/queries';
 
-// フォールバックデータ
-const defaultPosts = [
-  {
-    title: "アロマテラピーの基本",
-    excerpt: "心と身体を癒すアロマテラピーの基本的な使い方をご紹介します。",
-    image: "/blog-1.webp",
-    date: "2024.03.15",
-    slug: "aromatherapy-basics"
-  },
-  // ... 他のデフォルトデータ
-];
+// サーバーコンポーネントとしてデータを取得
+const BlogSection = async () => {
+  let posts = [];
 
-const BlogSection = () => {
-  const { data: posts, isLoading } = useSanityData(BLOG_POSTS_QUERY, 'blogPosts');
+  try {
+    posts = await client.fetch(BLOG_POSTS_QUERY);
+  } catch (error) {
+    console.error('Error fetching blog posts:', error);
+  }
 
-  const displayPosts = posts && posts.length > 0 ? posts : defaultPosts;
-
-  if (isLoading) {
-    return (
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="text-center">読み込み中...</div>
-        </div>
-      </section>
-    );
+  // フォールバックデータ
+  if (!posts || posts.length === 0) {
+    posts = [
+      {
+        title: "アロマテラピーの基本",
+        excerpt: "心と身体を癒すアロマテラピーの基本的な使い方をご紹介します。",
+        image: "/blog-1.webp",
+        date: "2024.03.15",
+        slug: "aromatherapy-basics"
+      },
+    ];
   }
 
   return (
@@ -42,7 +36,7 @@ const BlogSection = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {displayPosts.map((post: any, index: number) => (
+          {posts.map((post: any, index: number) => (
             <BlogCard
               key={post.slug || index}
               image={post.image}
