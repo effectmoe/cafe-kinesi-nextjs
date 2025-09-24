@@ -7,10 +7,9 @@ import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 import { client } from '@/lib/sanity';
 import { BLOG_POST_BY_SLUG_QUERY } from '@/lib/queries';
 
-// 動的レンダリングを強制（ビルドエラー回避のため）
-export const dynamic = 'force-dynamic';
-// ISRは一時的に無効化
-// export const revalidate = 3600;
+// ISR（Incremental Static Regeneration）を使用
+// 1時間ごとに再生成
+export const revalidate = 3600;
 
 interface BlogPageProps {
   params: Promise<{
