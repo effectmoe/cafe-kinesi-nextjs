@@ -1,0 +1,29 @@
+# キャッシュファイルを除外（サイズ制限回避）
+.next/cache
+node_modules/.cache
+
+# ローカル開発環境ファイル
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# その他の除外
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# テストファイル
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+
+# 開発用ファイル
+.vscode/
+.idea/
+
+# バックアップファイル
+*.backup
+*.bak

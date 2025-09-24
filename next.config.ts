@@ -71,6 +71,42 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
   },
 
+  // Vercel Serverless Function最適化
+  output: 'standalone',
+
+  // バンドルサイズ最適化
+  webpack: (config, { isServer }) => {
+    // サーバーサイド用の最適化
+    if (isServer) {
+      config.externals = [...(config.externals || []), {
+        '@sanity/client': 'commonjs @sanity/client',
+        'next-sanity': 'commonjs next-sanity'
+      }];
+    }
+
+    // チャンク分割の最適化
+    config.optimization.splitChunks = {
+      ...config.optimization.splitChunks,
+      cacheGroups: {
+        ...config.optimization.splitChunks?.cacheGroups,
+        sanity: {
+          test: /[\\/]node_modules[\\/](@sanity|next-sanity)[\\/]/,
+          name: 'sanity',
+          chunks: 'all',
+          priority: 30,
+        },
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendor',
+          chunks: 'all',
+          priority: 20,
+        },
+      },
+    };
+
+    return config;
+  },
+
   // リンクプリロードの最適化
   async redirects() {
     return [];
