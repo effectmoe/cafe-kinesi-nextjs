@@ -72,19 +72,19 @@ const BlogPostServer = ({ post }: BlogPostProps) => {
                 </time>
               </header>
 
-              {/* 抜粋 */}
-              {post.excerpt && (
-                <div className="mb-8 text-lg text-gray-600 leading-relaxed">
-                  {post.excerpt}
-                </div>
-              )}
-
-              {/* TL;DR セクション */}
+              {/* TL;DR セクション - 最優先表示 */}
               {post.tldr && (
                 <section className="mb-8 p-6 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
                   <h2 className="text-xl font-semibold mb-3 text-blue-700">TL;DR（要約）</h2>
                   <p className="text-gray-700">{post.tldr}</p>
                 </section>
+              )}
+
+              {/* 抜粋 */}
+              {post.excerpt && !post.tldr && (
+                <div className="mb-8 text-lg text-gray-600 leading-relaxed">
+                  {post.excerpt}
+                </div>
               )}
 
               {/* カテゴリー・タグ表示 */}
