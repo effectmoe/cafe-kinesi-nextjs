@@ -1,10 +1,50 @@
 'use client'
 
-// Visual Editing機能は一時的に無効化（ライブラリ互換性のため）
-// import { VisualEditing } from '@sanity/visual-editing'
+import { useEffect } from 'react'
 
 export default function LiveVisualEditing() {
-  // プレビューモードが有効な場合にSanityのVisual Editingツールバーを表示
+  useEffect(() => {
+    // Sanity Visual Editing overlaysを手動で有効化
+    if (typeof window !== 'undefined') {
+      // Sanity Visual Editingが利用可能かチェック
+      const loadVisualEditing = async () => {
+        try {
+          const { enableOverlays } = await import('@sanity/overlays')
+
+          const disable = enableOverlays({
+            history: {
+              subscribe: (navigate) => {
+                const handler = (event: PopStateEvent) => {
+                  navigate({
+                    type: 'push',
+                    url: event.state?.url || window.location.pathname,
+                  })
+                }
+                window.addEventListener('popstate', handler)
+                return () => window.removeEventListener('popstate', handler)
+              },
+              update: (update) => {
+                if (update.type === 'push' || update.type === 'replace') {
+                  const method = update.type === 'push' ? 'pushState' : 'replaceState'
+                  window.history[method]({ url: update.url }, '', update.url)
+                } else if (update.type === 'pop') {
+                  window.history.back()
+                }
+              },
+            },
+          })
+
+          return disable
+        } catch (error) {
+          console.warn('Visual Editing overlay could not be loaded:', error)
+          return null
+        }
+      }
+
+      loadVisualEditing()
+    }
+  }, [])
+
   return (
     <div
       id="sanity-visual-editing-toolbar"
@@ -21,7 +61,10 @@ export default function LiveVisualEditing() {
         zIndex: 9999
       }}
     >
-      Sanity Visual Editing モード - プレビュー中
+      📝 Sanity プレビューモード -
+      <a href="/api/disable-draft" style={{ color: 'white', textDecoration: 'underline', marginLeft: '8px' }}>
+        プレビューを終了
+      </a>
     </div>
   )
 }
