@@ -1,7 +1,7 @@
 import { draftMode } from 'next/headers'
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     console.log('Draft mode disable requested')
 
