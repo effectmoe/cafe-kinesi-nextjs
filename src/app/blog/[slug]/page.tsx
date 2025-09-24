@@ -140,21 +140,41 @@ export default async function BlogPage({ params }: BlogPageProps) {
       console.log('Post data structure:', JSON.stringify({
         hasKeyPoint: !!post.keyPoint,
         keyPointType: typeof post.keyPoint,
+        keyPointValue: post.keyPoint,
         hasFaq: !!post.faq,
         faqType: typeof post.faq,
         faqIsArray: Array.isArray(post.faq),
+        faqLength: Array.isArray(post.faq) ? post.faq.length : 0,
         tagsType: typeof post.tags,
-        tagsIsArray: Array.isArray(post.tags)
-      }));
+        tagsIsArray: Array.isArray(post.tags),
+        tagsValue: post.tags
+      }, null, 2));
     }
 
-    // mainImageの処理
+    // データの正規化と処理
     const processedPost = { ...post };
+
+    // mainImageの処理
     if (post.mainImage && typeof post.mainImage === 'object') {
       // mainImageが適切な形式か確認
       if (!post.mainImage._type || !post.mainImage.asset) {
         processedPost.mainImage = null;
       }
+    }
+
+    // tagsの正規化（オブジェクトの場合は配列に変換）
+    if (processedPost.tags && !Array.isArray(processedPost.tags)) {
+      if (typeof processedPost.tags === 'string') {
+        processedPost.tags = [processedPost.tags];
+      } else if (typeof processedPost.tags === 'object') {
+        // オブジェクトの値を配列に変換
+        processedPost.tags = Object.values(processedPost.tags).filter(tag => typeof tag === 'string');
+      }
+    }
+
+    // faqの正規化
+    if (processedPost.faq && !Array.isArray(processedPost.faq)) {
+      processedPost.faq = [];
     }
 
     return (

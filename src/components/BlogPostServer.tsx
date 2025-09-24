@@ -71,11 +71,21 @@ const BlogPostServer = ({ post }: BlogPostProps) => {
                     {post.category}
                   </span>
                 )}
-                {post.tags && Array.isArray(post.tags) && post.tags.map((tag: string) => (
-                  <span key={tag} className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">
-                    {tag}
-                  </span>
-                ))}
+                {post.tags && (
+                  Array.isArray(post.tags)
+                    ? post.tags.map((tag: string) => (
+                        <span key={tag} className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">
+                          {tag}
+                        </span>
+                      ))
+                    : typeof post.tags === 'string'
+                    ? (
+                        <span className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">
+                          {post.tags}
+                        </span>
+                      )
+                    : null
+                )}
               </div>
 
               {/* メインコンテンツ */}
