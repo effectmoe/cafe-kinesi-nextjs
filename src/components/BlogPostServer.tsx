@@ -17,6 +17,11 @@ const BlogPostServer = ({ post }: BlogPostProps) => {
     // 画像URLの安全な生成
     const getImageSrc = (image: any) => {
       if (!image) return '/placeholder.svg';
+      // imageが既にURL文字列の場合はそのまま返す
+      if (typeof image === 'string') {
+        return image;
+      }
+      // オブジェクトの場合はurlForで処理
       try {
         const url = urlFor(image).width(800).height(400).url();
         return url || '/placeholder.svg';
