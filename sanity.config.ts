@@ -19,9 +19,6 @@ export default defineConfig({
     structureTool({
       defaultDocumentNode,
     }),
-    presentationTool({
-      previewUrl: process.env.SANITY_STUDIO_PREVIEW_URL || 'https://cafe-kinesi-nextjs.vercel.app',
-    }),
     visionTool()
   ],
 
@@ -36,8 +33,10 @@ export default defineConfig({
     }
   },
 
-  // ドキュメントアクション - プロダクションプレビューを有効化
+  // ドキュメントアクション - デフォルトアクションを使用
   document: {
+    // デフォルトのパブリッシュアクションを使用
+    actions: (prev) => prev,
     productionUrl: async (prev, context) => {
       const {document} = context
 
@@ -70,4 +69,7 @@ export default defineConfig({
 
   // 開発環境でのデバッグ無効化
   debug: false,
+
+  // トークン設定（パブリッシュ機能に必要）
+  token: process.env.SANITY_API_TOKEN,
 })
