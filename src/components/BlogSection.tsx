@@ -15,18 +15,6 @@ const BlogSection = async () => {
     console.error('Error fetching blog posts:', error);
   }
 
-  // フォールバックデータ
-  if (!posts || posts.length === 0) {
-    posts = [
-      {
-        title: "アロマテラピーの基本",
-        excerpt: "心と身体を癒すアロマテラピーの基本的な使い方をご紹介します。",
-        image: "/blog-1.webp",
-        date: "2024.03.15",
-        slug: "aromatherapy-basics"
-      },
-    ];
-  }
 
   return (
     <section className="py-16 bg-gray-50">
@@ -39,20 +27,26 @@ const BlogSection = async () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {posts.map((post: any, index: number) => (
-            <BlogCard
-              key={post.slug || index}
-              image={post.mainImage ? (getImageUrl(post.mainImage) || '/placeholder.svg') : '/placeholder.svg'}
-              title={post.title}
-              excerpt={post.excerpt}
-              date={post.publishedAt ? new Date(post.publishedAt).toLocaleDateString("ja-JP", {
-                year: "numeric",
-                month: "long",
-                day: "numeric"
-              }) : post.date}
-              slug={post.slug}
-            />
-          ))}
+          {posts && posts.length > 0 ? (
+            posts.map((post: any, index: number) => (
+              <BlogCard
+                key={post.slug || index}
+                image={post.mainImage ? (getImageUrl(post.mainImage) || '/placeholder.svg') : '/placeholder.svg'}
+                title={post.title}
+                excerpt={post.excerpt}
+                date={post.publishedAt ? new Date(post.publishedAt).toLocaleDateString("ja-JP", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric"
+                }) : ''}
+                slug={post.slug}
+              />
+            ))
+          ) : (
+            <div className="col-span-full text-center py-12">
+              <p className="text-gray-500">ブログ記事がありません</p>
+            </div>
+          )}
         </div>
       </div>
     </section>
