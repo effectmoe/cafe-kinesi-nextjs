@@ -1,19 +1,9 @@
 import { draftMode } from 'next/headers'
-import { NextRequest } from 'next/server'
+import { redirect } from 'next/navigation'
 
-export async function GET(request: NextRequest) {
-  // ドラフトモードを有効化
+export async function GET() {
   const draft = await draftMode()
   draft.enable()
 
-  // リダイレクト先を取得（デフォルトはホーム）
-  const { searchParams } = request.nextUrl
-  const redirect = searchParams.get('redirect') || '/'
-
-  return new Response(null, {
-    status: 307,
-    headers: {
-      Location: redirect
-    }
-  })
+  redirect('/')
 }
