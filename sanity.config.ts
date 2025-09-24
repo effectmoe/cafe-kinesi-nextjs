@@ -23,8 +23,7 @@ export default defineConfig({
         preview: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
         origin: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
         draftMode: {
-          enable: '/api/enable-draft',
-          disable: '/api/disable-draft',
+          enable: '/api/draft',
         },
       },
       resolve: {

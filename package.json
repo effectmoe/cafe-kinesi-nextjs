@@ -40,6 +40,7 @@
     "@sanity/image-url": "^1.2.0",
     "@sanity/overlays": "^2.3.59",
     "@sanity/presentation": "^2.0.0",
+    "@sanity/preview-url-secret": "^2.1.15",
     "@sanity/react-loader": "^1.11.19",
     "@sanity/vision": "^4.10.0",
     "@sanity/visual-editing": "^3.0.5",
