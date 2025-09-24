@@ -30,7 +30,7 @@ const BlogList = async () => {
         {posts.map((post: any) => (
           <BlogCard
             key={post.slug}
-            image={post.mainImage ? getImageUrl(post.mainImage) : '/placeholder.svg'}
+            image={post.mainImage ? (getImageUrl(post.mainImage) || '/placeholder.svg') : '/placeholder.svg'}
             title={post.title}
             excerpt={post.excerpt}
             date={new Date(post.publishedAt).toLocaleDateString("ja-JP", {

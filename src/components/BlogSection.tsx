@@ -42,7 +42,7 @@ const BlogSection = async () => {
           {posts.map((post: any, index: number) => (
             <BlogCard
               key={post.slug || index}
-              image={post.mainImage ? getImageUrl(post.mainImage) : post.image}
+              image={post.mainImage ? (getImageUrl(post.mainImage) || post.image || '/placeholder.svg') : (post.image || '/placeholder.svg')}
               title={post.title}
               excerpt={post.excerpt}
               date={post.publishedAt ? new Date(post.publishedAt).toLocaleDateString("ja-JP", {
