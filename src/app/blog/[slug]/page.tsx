@@ -33,7 +33,7 @@ export async function generateStaticParams() {
 
     const sanitySlugs = posts
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .filter((post: any) => post && post.slug)
+      .filter((post: any) => post && post.slug && post.slug !== 'marker-test-post')
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .map((post: any) => ({
         slug: post.slug,
