@@ -1,7 +1,6 @@
 'use client';
 
-import React from 'react';
-import Link from 'next/link'; // ✅ Next.js Link
+import Link from 'next/link';
 
 interface BlogCardProps {
   image: string;
@@ -13,28 +12,20 @@ interface BlogCardProps {
 }
 
 const BlogCard = ({ image, title, excerpt, date, slug, className }: BlogCardProps) => {
-  // Sanitize image URL - prevent invalid paths
-  let sanitizedImage = image;
+  // Use placeholder for any invalid image URLs
+  const validImage = (image && image.startsWith('http')) ? image : '/placeholder.svg';
 
-  if (!image) {
-    sanitizedImage = '/placeholder.svg';
-  } else if (image.startsWith('/') && !image.startsWith('/placeholder')) {
-    sanitizedImage = '/placeholder.svg';
-  } else if (!image.startsWith('http') && !image.startsWith('/placeholder')) {
-    sanitizedImage = '/placeholder.svg';
-  }
   const content = (
     <article className={`group cursor-pointer ${className}`}>
       <div className="aspect-[4/3] overflow-hidden mb-4">
         <img
-          src={sanitizedImage}
+          src={validImage}
           alt={title}
           loading="lazy"
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           onError={(e) => {
             const target = e.target as HTMLImageElement;
             target.src = '/placeholder.svg';
-            target.onerror = null;
           }}
         />
       </div>
