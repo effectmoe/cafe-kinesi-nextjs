@@ -8,6 +8,14 @@ interface BlogPostProps {
 
 const BlogPostServer = ({ post }: BlogPostProps) => {
   try {
+    // デバッグ：受信したpostデータをログ出力
+    console.log('BlogPostServer received post:', {
+      title: post?.title,
+      tldr: post?.tldr,
+      keyPoint: post?.keyPoint,
+      summary: post?.summary,
+      faq: post?.faq
+    });
     // 画像URLの安全な生成
     const getImageSrc = (image: any) => {
       if (!image) return '/placeholder.svg';
