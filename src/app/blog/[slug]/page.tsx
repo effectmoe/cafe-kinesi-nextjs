@@ -7,9 +7,9 @@ import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 import { client } from '@/lib/sanity';
 import { BLOG_POST_BY_SLUG_QUERY } from '@/lib/queries';
 
-// ISR（Incremental Static Regeneration）を使用
-// 1分ごとに再生成（開発中は短く設定）
-export const revalidate = 60;
+// 動的レンダリングを強制
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 interface BlogPageProps {
   params: Promise<{
@@ -17,12 +17,10 @@ interface BlogPageProps {
   }>;
 }
 
-// 一時的に静的生成を無効化
-export async function generateStaticParams() {
-  // 問題が解決するまで空配列を返して静的生成をスキップ
-  console.log('Static generation disabled temporarily');
-  return [];
-}
+// 静的生成を完全に無効化（動的レンダリングのみ使用）
+// export async function generateStaticParams() {
+//   return [];
+// }
 
 export async function generateMetadata({ params }: BlogPageProps): Promise<Metadata> {
   try {
