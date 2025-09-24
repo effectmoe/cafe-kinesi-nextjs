@@ -17,7 +17,24 @@ export default defineConfig({
   plugins: [
     structureTool(),
     presentationTool({
-      previewUrl: 'https://cafe-kinesi-nextjs.vercel.app/api/draft'
+      previewUrl: {
+        origin: 'https://cafe-kinesi-nextjs.vercel.app',
+        previewMode: {
+          enable: '/api/draft',
+        },
+      },
+      resolve: {
+        mainDocuments: [
+          {
+            route: '/blog/:slug',
+            filter: `_type == "blogPost" && slug.current == $slug`,
+          },
+          {
+            route: '/news/:slug',
+            filter: `_type == "news" && slug.current == $slug`,
+          },
+        ],
+      },
     }),
     visionTool()
   ],
