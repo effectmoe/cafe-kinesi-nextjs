@@ -269,12 +269,13 @@ export default {
   preview: {
     select: {
       title: 'title',
+      slug: 'slug.current',
       author: 'author.name',
       media: 'mainImage',
       date: 'publishedAt',
     },
     prepare(selection: any) {
-      const {title, author, media, date} = selection;
+      const {title, slug, author, media, date} = selection;
       const dateFormatted = date ? new Date(date).toLocaleDateString('ja-JP') : '未公開';
       return {
         title,

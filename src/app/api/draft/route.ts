@@ -3,14 +3,14 @@ import { redirect } from 'next/navigation'
 import { NextRequest } from 'next/server'
 
 export async function GET(request: NextRequest) {
-  // デバッグ用ログ
   console.log('Draft API called with URL:', request.url)
 
   const { searchParams } = new URL(request.url)
   const slug = searchParams.get('slug')
-  const pathname = searchParams.get('pathname')
+  const pathname = searchParams.get('pathname') || searchParams.get('path')
+  const type = searchParams.get('type')
 
-  console.log('Slug:', slug, 'Pathname:', pathname)
+  console.log('Parameters:', { slug, pathname, type })
 
   // ドラフトモードを有効化
   const draft = await draftMode()
@@ -21,10 +21,20 @@ export async function GET(request: NextRequest) {
   // リダイレクト先の決定
   let redirectTo = '/'
 
+  // pathnameがある場合はそれを優先
   if (pathname) {
     redirectTo = pathname
-  } else if (slug) {
-    redirectTo = `/blog/${slug}`
+  }
+  // typeとslugから自動判定
+  else if (slug) {
+    if (type === 'blogPost') {
+      redirectTo = `/blog/${slug}`
+    } else if (type === 'news') {
+      redirectTo = `/news/${slug}`
+    } else {
+      // typeが不明な場合はblogを仮定
+      redirectTo = `/blog/${slug}`
+    }
   }
 
   console.log('Redirecting to:', redirectTo)
