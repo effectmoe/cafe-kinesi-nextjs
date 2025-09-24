@@ -5,7 +5,7 @@ import './globals.css'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { Toaster } from '@/components/ui/toaster'
 import { Toaster as Sonner } from '@/components/ui/sonner'
-import { ReactQueryProvider } from '@/components/providers/ReactQueryProvider'
+// import { ReactQueryProvider } from '@/components/providers/ReactQueryProvider'
 import { Analytics } from './analytics'
 import { WebVitals } from './reportWebVitals'
 import { VercelAnalytics } from './vercel-analytics'
@@ -127,13 +127,11 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased">
-        <ReactQueryProvider>
-          <TooltipProvider>
-            {children}
-            <Toaster />
-            <Sonner />
-          </TooltipProvider>
-        </ReactQueryProvider>
+        <TooltipProvider>
+          {children}
+          <Toaster />
+          <Sonner />
+        </TooltipProvider>
         <Analytics />
         <WebVitals />
         <VercelAnalytics />

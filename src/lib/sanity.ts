@@ -68,11 +68,30 @@ export const client = createClient({
   projectId,
   dataset,
   apiVersion,
-  useCdn: false, // クライアントサイドでは最新データを取得
-  ignoreBrowserTokenWarning: true,
-  token: process.env.NEXT_PUBLIC_SANITY_API_TOKEN,
+  useCdn: process.env.NODE_ENV === 'production', // 本番環境ではCDN使用
   perspective: 'published',
 })
+
+// サーバーコンポーネント用のsanityFetch関数
+export async function sanityFetch<QueryResponse = any>({
+  query,
+  params = {},
+  revalidate = 60, // 60秒ごとに再検証
+  tags = [],
+}: {
+  query: string
+  params?: any
+  revalidate?: number | false
+  tags?: string[]
+}) {
+  return client.fetch<QueryResponse>(query, params, {
+    cache: revalidate === false || revalidate === 0 ? 'no-store' : 'force-cache',
+    next: {
+      revalidate: tags.length ? false : revalidate,
+      tags,
+    },
+  } as any)
+}
 
 // 後方互換性のため
 export const sanityClient = client

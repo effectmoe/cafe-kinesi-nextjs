@@ -1,5 +1,5 @@
 import BlogCard from './BlogCard';
-import { client } from '@/lib/sanity';
+import { sanityFetch } from '@/lib/sanity';
 import { BLOG_POSTS_QUERY } from '@/lib/queries';
 
 // サーバーコンポーネントとしてデータを取得
@@ -7,7 +7,10 @@ const BlogSection = async () => {
   let posts = [];
 
   try {
-    posts = await client.fetch(BLOG_POSTS_QUERY);
+    posts = await sanityFetch({
+      query: BLOG_POSTS_QUERY,
+      revalidate: 1800, // 30分でキャッシュ更新
+    });
   } catch (error) {
     console.error('Error fetching blog posts:', error);
   }
