@@ -1,21 +1,33 @@
-import { validatePreviewUrl } from '@sanity/preview-url-secret'
 import { draftMode } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { NextRequest } from 'next/server'
 
-import { client } from '@/lib/sanity'
-
-const token = process.env.SANITY_API_TOKEN!
-
 export async function GET(request: NextRequest) {
-  const { isValid, redirectTo = '/' } = await validatePreviewUrl(client.withConfig({ token }), request.url)
+  // デバッグ用ログ
+  console.log('Draft API called with URL:', request.url)
 
-  if (!isValid) {
-    return new Response('Invalid secret', { status: 401 })
-  }
+  const { searchParams } = new URL(request.url)
+  const slug = searchParams.get('slug')
+  const pathname = searchParams.get('pathname')
 
+  console.log('Slug:', slug, 'Pathname:', pathname)
+
+  // ドラフトモードを有効化
   const draft = await draftMode()
   draft.enable()
+
+  console.log('Draft mode enabled')
+
+  // リダイレクト先の決定
+  let redirectTo = '/'
+
+  if (pathname) {
+    redirectTo = pathname
+  } else if (slug) {
+    redirectTo = `/blog/${slug}`
+  }
+
+  console.log('Redirecting to:', redirectTo)
 
   redirect(redirectTo)
 }
