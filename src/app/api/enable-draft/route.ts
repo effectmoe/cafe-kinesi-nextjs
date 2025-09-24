@@ -1,28 +1,33 @@
 import { draftMode } from 'next/headers'
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     console.log('[Enable Draft] Starting...')
 
-    // draftModeを取得
+    const url = new URL(request.url)
+    const params = new URLSearchParams(url.search)
+
+    // Sanityからのsecretとpathname取得
+    const secret = params.get('sanity-preview-secret')
+    const pathname = params.get('sanity-preview-pathname') || '/'
+
+    console.log('[Enable Draft] Parameters:', { secret: !!secret, pathname })
+
+    // draftModeを取得して有効化
     const draft = await draftMode()
-    console.log('[Enable Draft] Draft mode object obtained')
-
-    // 有効化
     draft.enable()
-    console.log('[Enable Draft] Draft mode enabled')
 
-    // リダイレクトレスポンスを返す
-    return NextResponse.redirect(new URL('/', 'https://cafe-kinesi-nextjs.vercel.app'), 303)
+    console.log('[Enable Draft] Draft mode enabled, redirecting to:', pathname)
+
+    // パスにリダイレクト
+    return NextResponse.redirect(new URL(pathname, url.origin))
   } catch (error) {
     console.error('[Enable Draft] Error:', error)
 
-    // エラーの詳細を返す
     return NextResponse.json({
       error: 'Failed to enable draft mode',
       message: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined
     }, { status: 500 })
   }
 }

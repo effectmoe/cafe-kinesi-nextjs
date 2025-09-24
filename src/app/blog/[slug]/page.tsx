@@ -7,9 +7,15 @@ import BlogPostServer from '@/components/BlogPostServer';
 import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 import { sanityFetch } from '@/lib/sanity';
 import { BLOG_POST_BY_SLUG_QUERY, BLOG_POST_PREVIEW_QUERY } from '@/lib/queries';
+import dynamic from 'next/dynamic';
+
+// Visual Editingを動的にインポート
+const VisualEditing = dynamic(() => import('@/components/VisualEditing'), {
+  ssr: false,
+});
 
 // 動的レンダリングを強制
-export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 interface BlogPageProps {
   params: Promise<{
@@ -96,6 +102,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
           <BlogPostServer post={post} />
         </main>
         <Footer />
+        {isDraft && <VisualEditing />}
       </div>
     );
   } catch (error) {
