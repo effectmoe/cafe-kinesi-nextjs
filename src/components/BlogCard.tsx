@@ -1,0 +1,50 @@
+import Link from 'next/link'; // ✅ Next.js Link
+
+interface BlogCardProps {
+  image: string;
+  title: string;
+  excerpt: string;
+  date: string;
+  slug?: string | { current: string };
+  className?: string;
+}
+
+const BlogCard = ({ image, title, excerpt, date, slug, className }: BlogCardProps) => {
+  const content = (
+    <article className={`group cursor-pointer ${className}`}>
+      <div className="aspect-[4/3] overflow-hidden mb-4">
+        <img
+          src={image}
+          alt={title}
+          loading="lazy"
+          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+        />
+      </div>
+      <div className="space-y-3">
+        <h3 className="font-noto-serif text-lg font-medium text-[hsl(var(--text-primary))] leading-relaxed group-hover:text-[hsl(var(--primary))] transition-colors">
+          {title}
+        </h3>
+        <p className="text-sm text-[hsl(var(--text-secondary))] leading-relaxed line-clamp-3">
+          {excerpt}
+        </p>
+        <time className="text-xs text-[hsl(var(--text-muted))] font-light tracking-wider uppercase">
+          {date}
+        </time>
+      </div>
+    </article>
+  );
+
+  // Next.js Link の正しい使用方法
+  if (slug) {
+    const slugStr = typeof slug === 'string' ? slug : slug.current;
+    return (
+      <Link href={`/blog/${slugStr}`} className="block">
+        {content}
+      </Link>
+    );
+  }
+
+  return content;
+};
+
+export default BlogCard;
