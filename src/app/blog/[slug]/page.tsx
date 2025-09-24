@@ -7,9 +7,10 @@ import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 import { client } from '@/lib/sanity';
 import { BLOG_POST_BY_SLUG_QUERY } from '@/lib/queries';
 
-// ISR（Incremental Static Regeneration）設定
-// 1時間ごとにページを再生成
-export const revalidate = 3600;
+// 動的レンダリングを強制（ビルドエラー回避のため）
+export const dynamic = 'force-dynamic';
+// ISRは一時的に無効化
+// export const revalidate = 3600;
 
 interface BlogPageProps {
   params: Promise<{
@@ -17,34 +18,11 @@ interface BlogPageProps {
   }>;
 }
 
+// 一時的に静的生成を無効化
 export async function generateStaticParams() {
-  // Sanityから記事スラッグを取得
-  try {
-    const posts = await client.fetch(`
-      *[_type == "blogPost" && defined(slug.current)]{
-        "slug": slug.current
-      }
-    `);
-
-    if (!posts || !Array.isArray(posts)) {
-      console.log('No posts found or invalid response from Sanity');
-      return [];
-    }
-
-    const sanitySlugs = posts
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .filter((post: any) => post && post.slug && post.slug !== 'marker-test-post')
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .map((post: any) => ({
-        slug: post.slug,
-      }));
-
-    console.log('Generated static params for slugs:', sanitySlugs);
-    return sanitySlugs;
-  } catch (error) {
-    console.error('Sanityデータ取得エラー:', error);
-    return [];
-  }
+  // 問題が解決するまで空配列を返して静的生成をスキップ
+  console.log('Static generation disabled temporarily');
+  return [];
 }
 
 export async function generateMetadata({ params }: BlogPageProps): Promise<Metadata> {
@@ -119,17 +97,6 @@ export default async function BlogPage({ params }: BlogPageProps) {
     // デバッグログ
     if (typeof window === 'undefined') {
       console.log(`Fetching blog post with slug: ${slug}`);
-    }
-
-    // marker-test-postの場合は、データ取得前に早期リターン
-    if (slug === 'marker-test-post') {
-      console.log('Early return for marker-test-post');
-      return (
-        <div>
-          <h1>Test Post</h1>
-          <p>This post is temporarily unavailable.</p>
-        </div>
-      );
     }
 
     // Sanityから記事データを取得
