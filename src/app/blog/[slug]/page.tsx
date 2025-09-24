@@ -113,20 +113,16 @@ export default async function BlogPage({ params }: BlogPageProps) {
     }
 
     // デバッグ用に記事データの構造をログ出力
-    if (typeof window === 'undefined' && slug === 'marker-test-post') {
-      console.log('Post data structure:', JSON.stringify({
-        hasKeyPoint: !!post.keyPoint,
-        keyPointType: typeof post.keyPoint,
-        keyPointValue: post.keyPoint,
-        hasFaq: !!post.faq,
-        faqType: typeof post.faq,
-        faqIsArray: Array.isArray(post.faq),
-        faqLength: Array.isArray(post.faq) ? post.faq.length : 0,
-        tagsType: typeof post.tags,
-        tagsIsArray: Array.isArray(post.tags),
-        tagsValue: post.tags,
-        tagsIsNull: post.tags === null,
-        tagsIsUndefined: post.tags === undefined
+    if (typeof window === 'undefined') {
+      console.log(`Post data for ${slug}:`, JSON.stringify({
+        hasTitle: !!post.title,
+        hasMainImage: !!post.mainImage,
+        hasBody: !!post.body,
+        hasAuthor: !!post.author,
+        hasPublishedAt: !!post.publishedAt,
+        mainImageType: typeof post.mainImage,
+        bodyType: typeof post.body,
+        bodyIsArray: Array.isArray(post.body)
       }, null, 2));
     }
 
@@ -185,7 +181,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
             <ArticleJsonLd
               title={processedPost.title || 'Blog Post'}
               description={processedPost.excerpt || processedPost.tldr || ''}
-              image={processedPost.mainImage ? undefined : undefined}
+              image={processedPost.mainImage || undefined}
               publishedAt={processedPost.publishedAt || new Date().toISOString()}
               author={processedPost.author?.name}
               url={`https://cafe-kinesi.com/blog/${slug}`}
