@@ -1,5 +1,5 @@
 import BlogCard from './BlogCard';
-import { sanityFetch } from '@/lib/sanity';
+import { sanityFetch, getImageUrl } from '@/lib/sanity';
 import { BLOG_POSTS_QUERY } from '@/lib/queries';
 
 // サーバーコンポーネントとしてデータを取得
@@ -42,10 +42,14 @@ const BlogSection = async () => {
           {posts.map((post: any, index: number) => (
             <BlogCard
               key={post.slug || index}
-              image={post.image}
+              image={post.mainImage ? getImageUrl(post.mainImage) : post.image}
               title={post.title}
               excerpt={post.excerpt}
-              date={post.date}
+              date={post.publishedAt ? new Date(post.publishedAt).toLocaleDateString("ja-JP", {
+                year: "numeric",
+                month: "long",
+                day: "numeric"
+              }) : post.date}
               slug={post.slug}
             />
           ))}

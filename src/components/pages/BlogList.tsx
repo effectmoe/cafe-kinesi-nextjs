@@ -1,5 +1,5 @@
 import BlogCard from "@/components/BlogCard";
-import { sanityFetch } from '@/lib/sanity';
+import { sanityFetch, getImageUrl } from '@/lib/sanity';
 import { BLOG_POSTS_QUERY } from '@/lib/queries';
 
 const BlogList = async () => {
@@ -30,7 +30,7 @@ const BlogList = async () => {
         {posts.map((post: any) => (
           <BlogCard
             key={post.slug}
-            image={post.mainImage}
+            image={post.mainImage ? getImageUrl(post.mainImage) : '/placeholder.svg'}
             title={post.title}
             excerpt={post.excerpt}
             date={new Date(post.publishedAt).toLocaleDateString("ja-JP", {
