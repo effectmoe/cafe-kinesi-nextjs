@@ -121,6 +121,17 @@ export default async function BlogPage({ params }: BlogPageProps) {
       console.log(`Fetching blog post with slug: ${slug}`);
     }
 
+    // marker-test-postの場合は、データ取得前に早期リターン
+    if (slug === 'marker-test-post') {
+      console.log('Early return for marker-test-post');
+      return (
+        <div>
+          <h1>Test Post</h1>
+          <p>This post is temporarily unavailable.</p>
+        </div>
+      );
+    }
+
     // Sanityから記事データを取得
     const post = await client.fetch(BLOG_POST_BY_SLUG_QUERY, { slug }).catch((err) => {
       console.error('Sanity fetch error:', err);
@@ -197,23 +208,6 @@ export default async function BlogPage({ params }: BlogPageProps) {
     }
 
     console.log('Data normalization complete for:', slug);
-
-    // marker-test-postの場合は特別な処理
-    if (slug === 'marker-test-post') {
-      console.log('Special handling for marker-test-post');
-      return (
-        <div className="min-h-screen bg-white">
-          <Header />
-          <main>
-            <div className="container mx-auto px-4 py-16">
-              <h1 className="text-3xl font-bold mb-4">{processedPost.title || 'Test Post'}</h1>
-              <p>{processedPost.excerpt || 'This is a test post.'}</p>
-            </div>
-          </main>
-          <Footer />
-        </div>
-      );
-    }
 
     try {
       console.log('Rendering components for:', slug);
