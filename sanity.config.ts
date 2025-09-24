@@ -1,6 +1,5 @@
 import {defineConfig} from 'sanity'
 import {structureTool} from 'sanity/structure'
-import {visionTool} from '@sanity/vision'
 import {presentationTool} from 'sanity/presentation'
 import {schemaTypes} from './schemas'
 import {defaultDocumentNode} from './sanity/structure'
@@ -19,7 +18,56 @@ export default defineConfig({
     structureTool({
       defaultDocumentNode,
     }),
-    // visionToolは重いので削除
+    presentationTool({
+      previewUrl: {
+        preview: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+        origin: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+        draftMode: {
+          enable: '/api/enable-draft',
+          disable: '/api/disable-draft',
+        },
+      },
+      resolve: {
+        locations: {
+          blogPost: {
+            select: {
+              title: 'title',
+              slug: 'slug.current',
+            },
+            resolve: (doc) => ({
+              locations: [
+                {
+                  title: doc?.title || 'Untitled',
+                  href: `/blog/${doc?.slug}`,
+                },
+                {
+                  title: 'ブログ一覧',
+                  href: '/blog',
+                },
+              ],
+            }),
+          },
+          news: {
+            select: {
+              title: 'title',
+              slug: 'slug.current',
+            },
+            resolve: (doc) => ({
+              locations: [
+                {
+                  title: doc?.title || 'Untitled',
+                  href: `/news/${doc?.slug}`,
+                },
+                {
+                  title: 'ニュース一覧',
+                  href: '/news',
+                },
+              ],
+            }),
+          },
+        },
+      },
+    }),
   ],
 
   schema: {
