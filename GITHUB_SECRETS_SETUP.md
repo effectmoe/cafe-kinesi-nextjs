@@ -6,7 +6,7 @@ GitHubリポジトリで以下のシークレットを設定してください�
 
 ### 1. Vercel関連
 ```
-VERCEL_TOKEN=<Vercelトークン>
+VERCEL_TOKEN=Dc3PSKCAc3foIbwFkkp3ALqS
 VERCEL_ORG_ID=team_MAGwFE7LFZ3i9FAMQdYkmSm2
 VERCEL_PROJECT_ID=prj_jrvZqAC5DFzHWjo17uHQREH7OjGw
 ```
