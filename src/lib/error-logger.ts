@@ -60,7 +60,8 @@ class ErrorLogger {
     }
   }
 
-  private async sendToErrorService(errorLog: ErrorLog) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private async sendToErrorService(_errorLog: ErrorLog) {
     // 将来的にSentryなどのエラー監視サービスと連携
     try {
       // Example: Send to error monitoring service
@@ -74,7 +75,8 @@ class ErrorLogger {
     }
   }
 
-  logWarning(message: string, details?: any) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  logWarning(message: string, _details?: any) {
     this.logError(new Error(message), 'warning');
   }
 

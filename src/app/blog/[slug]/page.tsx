@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import BlogPostServer from '@/components/BlogPostServer';
 import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 import { client } from '@/lib/sanity';
-import { BLOG_POST_BY_SLUG_QUERY, BLOG_POSTS_QUERY } from '@/lib/queries';
+import { BLOG_POST_BY_SLUG_QUERY } from '@/lib/queries';
 
 // ISR（Incremental Static Regeneration）設定
 // 1時間ごとにページを再生成
@@ -32,7 +32,9 @@ export async function generateStaticParams() {
     }
 
     const sanitySlugs = posts
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .filter((post: any) => post && post.slug)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .map((post: any) => ({
         slug: post.slug,
       }));
@@ -134,7 +136,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
     }
 
     // mainImageの処理
-    let processedPost = { ...post };
+    const processedPost = { ...post };
     if (post.mainImage && typeof post.mainImage === 'object') {
       // mainImageが適切な形式か確認
       if (!post.mainImage._type || !post.mainImage.asset) {
