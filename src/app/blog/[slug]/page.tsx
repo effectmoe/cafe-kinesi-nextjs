@@ -1,4 +1,6 @@
 import { notFound } from "next/navigation";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import { client } from '@/lib/sanity';
 import { BLOG_POST_BY_SLUG_QUERY } from '@/lib/queries';
 
@@ -33,6 +35,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
 
     return (
       <div className="min-h-screen bg-white">
+        <Header />
         <main className="container mx-auto px-4 py-16">
           <h1 className="text-4xl font-bold mb-4">{post.title || 'No Title'}</h1>
           {post.excerpt && (
@@ -44,6 +47,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
             <p>Content type: {typeof post.content}</p>
           </div>
         </main>
+        <Footer />
       </div>
     );
   } catch (error) {
