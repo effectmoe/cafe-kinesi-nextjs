@@ -90,7 +90,6 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
         ...categories
       ],
       authors: [{ name: article.author?.name || 'Cafe Kinesi' }],
-      publishedTime: article.publishedAt,
       openGraph: {
         title: article.title,
         description: article.excerpt || `${article.title}に関する記事です。`,

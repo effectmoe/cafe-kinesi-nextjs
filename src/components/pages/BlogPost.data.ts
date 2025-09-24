@@ -7,6 +7,7 @@ export interface Article {
   publishedAt: string;
   author: { name: string };
   content: Array<{ type?: string; text: string }>;
+  category?: string;
 }
 
 export const localArticles: { [key: string]: Article } = {

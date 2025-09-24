@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { onCLS, onFCP, onFID, onLCP, onTTFB, onINP } from 'web-vitals';
+import { onCLS, onFCP, onLCP, onTTFB, onINP } from 'web-vitals';
 import { reportWebVitals as sendToAnalytics } from '@/lib/gtag';
 
 export function WebVitals() {
@@ -34,14 +34,8 @@ export function WebVitals() {
       });
     });
 
-    onFID((metric) => {
-      sendToAnalytics({
-        id: metric.id,
-        name: 'FID',
-        label: 'web-vital',
-        value: metric.value,
-      });
-    });
+    // onFID is deprecated in web-vitals v5, replaced by onINP
+    // FID (First Input Delay) is now tracked through INP (Interaction to Next Paint)
 
     onTTFB((metric) => {
       sendToAnalytics({
