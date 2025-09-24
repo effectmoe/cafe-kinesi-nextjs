@@ -1,25 +1,35 @@
 import { createClient } from '@sanity/client'
 import imageUrlBuilder from '@sanity/image-url'
 
+// デバッグ用ログ（ビルド時のみ）
+if (typeof window === 'undefined') {
+  console.log('Sanity Environment Variables Debug:')
+  console.log('NEXT_PUBLIC_SANITY_PROJECT_ID:', process.env.NEXT_PUBLIC_SANITY_PROJECT_ID)
+  console.log('NEXT_PUBLIC_SANITY_DATASET:', process.env.NEXT_PUBLIC_SANITY_DATASET)
+  console.log('NEXT_PUBLIC_SANITY_API_VERSION:', process.env.NEXT_PUBLIC_SANITY_API_VERSION)
+}
+
 // 環境変数の安全な取得
 const getEnvVar = (key: string, defaultValue: string): string => {
   const value = process.env[key]
-  if (!value || value === 'undefined' || value === 'null' || value === '') {
+  if (!value || value === 'undefined' || value === 'null' || value === '' || value.trim() === '') {
     return defaultValue
   }
-  return value
+  return value.trim()
 }
 
-// 環境変数のバリデーション
-const projectId = getEnvVar('NEXT_PUBLIC_SANITY_PROJECT_ID', 'e4aqw590')
-const dataset = getEnvVar('NEXT_PUBLIC_SANITY_DATASET', 'production')
-const apiVersion = getEnvVar('NEXT_PUBLIC_SANITY_API_VERSION', '2024-01-01')
+// 環境変数の取得（デフォルト値付き）
+const rawProjectId = getEnvVar('NEXT_PUBLIC_SANITY_PROJECT_ID', 'e4aqw590')
+const rawDataset = getEnvVar('NEXT_PUBLIC_SANITY_DATASET', 'production')
+const rawApiVersion = getEnvVar('NEXT_PUBLIC_SANITY_API_VERSION', '2024-01-01')
 
 // projectIdのバリデーション（ビルドエラー回避）
 const validateProjectId = (id: string): string => {
   // projectIdの形式をチェック（a-z, 0-9, ダッシュのみ）
-  if (!/^[a-z0-9-]+$/.test(id)) {
-    console.warn('Invalid projectId format, using default')
+  if (!id || !/^[a-z0-9-]+$/.test(id)) {
+    if (typeof window === 'undefined') {
+      console.warn(`Invalid projectId format: "${id}", using default`)
+    }
     return 'e4aqw590'
   }
   return id
@@ -28,17 +38,36 @@ const validateProjectId = (id: string): string => {
 // datasetのバリデーション
 const validateDataset = (ds: string): string => {
   // datasetの形式をチェック（小文字、数字、アンダースコア、ダッシュのみ）
-  if (!/^[a-z0-9_-]+$/.test(ds)) {
-    console.warn('Invalid dataset format, using default')
+  if (!ds || !/^[a-z0-9_-]+$/.test(ds)) {
+    if (typeof window === 'undefined') {
+      console.warn(`Invalid dataset format: "${ds}", using default`)
+    }
     return 'production'
   }
   return ds
 }
 
+// apiVersionのバリデーション
+const validateApiVersion = (version: string): string => {
+  // API versionの形式をチェック（YYYY-MM-DD または v1）
+  if (!version || (!/^\d{4}-\d{2}-\d{2}$/.test(version) && version !== 'v1' && version !== '1')) {
+    if (typeof window === 'undefined') {
+      console.warn(`Invalid API version format: "${version}", using default`)
+    }
+    return '2024-01-01'
+  }
+  return version
+}
+
+// 検証済みの値
+const projectId = validateProjectId(rawProjectId)
+const dataset = validateDataset(rawDataset)
+const apiVersion = validateApiVersion(rawApiVersion)
+
 export const client = createClient({
-  projectId: validateProjectId(projectId),
-  dataset: validateDataset(dataset),
-  apiVersion: apiVersion || '2024-01-01',
+  projectId,
+  dataset,
+  apiVersion,
   useCdn: false, // クライアントサイドでは最新データを取得
   ignoreBrowserTokenWarning: true,
 })
