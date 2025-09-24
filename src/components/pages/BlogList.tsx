@@ -1,12 +1,24 @@
+'use client';
+
 import BlogCard from "@/components/BlogCard";
-import { localArticles } from "./BlogPost.data";
+import { useSanityData } from '@/hooks/useSanityData';
+import { BLOG_POSTS_QUERY } from '@/lib/queries';
 
 const BlogList = () => {
-  // 記事をリスト形式に変換して日付でソート
-  const blogPosts = Object.entries(localArticles).map(([slug, article]) => ({
-    slug,
-    ...article
-  })).sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+  const { data: blogPosts, isLoading } = useSanityData(
+    BLOG_POSTS_QUERY,
+    'blogPosts'
+  );
+
+  if (isLoading) {
+    return (
+      <div className="w-full max-w-screen-xl mx-auto px-6 py-12">
+        <div className="text-center">読み込み中...</div>
+      </div>
+    );
+  }
+
+  const posts = blogPosts || [];
 
   return (
     <div className="w-full max-w-screen-xl mx-auto px-6 py-12">
@@ -21,10 +33,10 @@ const BlogList = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {blogPosts.map((post) => (
+        {posts.map((post: any) => (
           <BlogCard
             key={post.slug}
-            image={post.image}
+            image={post.mainImage}
             title={post.title}
             excerpt={post.excerpt}
             date={new Date(post.publishedAt).toLocaleDateString("ja-JP", {
@@ -37,7 +49,7 @@ const BlogList = () => {
         ))}
       </div>
 
-      {blogPosts.length === 0 && (
+      {posts.length === 0 && (
         <div className="text-center py-12">
           <p className="text-[hsl(var(--text-secondary))]">
             現在、記事はありません。
