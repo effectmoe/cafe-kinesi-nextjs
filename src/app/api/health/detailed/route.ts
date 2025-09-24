@@ -1,12 +1,9 @@
 import { client } from '@/lib/sanity';
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
 
-interface DetailedHealthStatus {
+interface HealthStatus {
   status: 'healthy' | 'degraded' | 'unhealthy';
   timestamp: string;
-  version: string;
   environment: string;
   checks: {
     database: {
@@ -14,49 +11,19 @@ interface DetailedHealthStatus {
       latency?: number;
       error?: string;
     };
-    filesystem: {
-      status: boolean;
-      writable: boolean;
-      error?: string;
-    };
     memory: {
-      status: boolean;
       heapUsed: number;
       heapTotal: number;
-      external: number;
-      rss: number;
       percentage: number;
     };
     performance: {
       uptime: number;
-      loadAverage?: number[];
       responseTime: number;
-    };
-    dependencies: {
-      next: string;
-      react: string;
-      sanity: string;
-    };
-    endpoints: {
-      api: boolean;
-      images: boolean;
-      static: boolean;
     };
   };
 }
 
-export async function GET(request: Request) {
-  // 認証チェック（本番環境では必須）
-  const authHeader = request.headers.get('authorization');
-  const expectedToken = process.env.HEALTH_CHECK_TOKEN;
-
-  if (process.env.NODE_ENV === 'production' && expectedToken && authHeader !== `Bearer ${expectedToken}`) {
-    return NextResponse.json(
-      { error: 'Unauthorized' },
-      { status: 401 }
-    );
-  }
-
+export async function GET() {
   const startTime = Date.now();
   const issues: string[] = [];
 
@@ -69,14 +36,14 @@ export async function GET(request: Request) {
 
     try {
       const testQuery = await client.fetch(
-        `count(*[_type in ["blogPost", "menuItem", "event", "news"]])`,
+        `count(*[_type == "blogPost"])`,
         {},
         { cache: 'no-store' }
       );
       dbStatus = typeof testQuery === 'number';
       dbLatency = Date.now() - dbStart;
 
-      if (dbLatency > 2000) {
+      if (dbLatency > 3000) {
         issues.push(`Database latency high: ${dbLatency}ms`);
       }
     } catch (error) {
@@ -84,72 +51,35 @@ export async function GET(request: Request) {
       issues.push(`Database error: ${dbError}`);
     }
 
-    // 2. ファイルシステムチェック
-    let fsStatus = false;
-    let fsWritable = false;
-    let fsError: string | undefined;
-
-    try {
-      const tempDir = path.join(process.cwd(), '.next', 'cache');
-      fsStatus = fs.existsSync(tempDir);
-
-      if (fsStatus) {
-        const testFile = path.join(tempDir, `health-check-${Date.now()}.tmp`);
-        try {
-          fs.writeFileSync(testFile, 'test');
-          fs.unlinkSync(testFile);
-          fsWritable = true;
-        } catch {
-          fsWritable = false;
-          issues.push('Filesystem not writable');
-        }
-      }
-    } catch (error) {
-      fsError = error instanceof Error ? error.message : 'Filesystem check failed';
-      issues.push(`Filesystem error: ${fsError}`);
-    }
-
-    // 3. メモリチェック
+    // 2. メモリチェック（簡易版）
     const memoryUsage = process.memoryUsage();
     const memoryLimit = 512 * 1024 * 1024; // 512MB
     const memoryPercentage = Math.round((memoryUsage.heapUsed / memoryLimit) * 100);
-    const memoryStatus = memoryPercentage < 90;
 
-    if (memoryPercentage > 80) {
+    if (memoryPercentage > 85) {
       issues.push(`Memory usage high: ${memoryPercentage}%`);
     }
 
-    // 4. パフォーマンスメトリクス
+    // 3. パフォーマンスメトリクス
     const uptime = process.uptime();
     const responseTime = Date.now() - startTime;
 
-    if (responseTime > 5000) {
+    if (responseTime > 3000) {
       issues.push(`Slow response time: ${responseTime}ms`);
     }
-
-    // 5. 依存関係バージョン
-    const packageJson = JSON.parse(
-      fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8')
-    );
-
-    // 6. エンドポイントチェック
-    const apiStatus = dbStatus;
-    const imagesStatus = Boolean(process.env.NEXT_PUBLIC_SANITY_PROJECT_ID);
-    const staticStatus = fs.existsSync(path.join(process.cwd(), 'public'));
 
     // 全体のステータス判定
     let overallStatus: 'healthy' | 'degraded' | 'unhealthy' = 'healthy';
 
-    if (!dbStatus || !fsStatus || !memoryStatus) {
+    if (!dbStatus || memoryPercentage > 90) {
       overallStatus = 'unhealthy';
     } else if (issues.length > 0) {
       overallStatus = 'degraded';
     }
 
-    const detailedStatus: DetailedHealthStatus = {
+    const healthStatus: HealthStatus = {
       status: overallStatus,
       timestamp: new Date().toISOString(),
-      version: packageJson.version || '0.1.0',
       environment: process.env.NODE_ENV || 'development',
       checks: {
         database: {
@@ -157,44 +87,21 @@ export async function GET(request: Request) {
           latency: dbLatency,
           error: dbError
         },
-        filesystem: {
-          status: fsStatus,
-          writable: fsWritable,
-          error: fsError
-        },
         memory: {
-          status: memoryStatus,
           heapUsed: Math.round(memoryUsage.heapUsed / 1024 / 1024),
           heapTotal: Math.round(memoryUsage.heapTotal / 1024 / 1024),
-          external: Math.round(memoryUsage.external / 1024 / 1024),
-          rss: Math.round(memoryUsage.rss / 1024 / 1024),
           percentage: memoryPercentage
         },
         performance: {
           uptime: Math.round(uptime),
           responseTime
-        },
-        dependencies: {
-          next: packageJson.dependencies.next,
-          react: packageJson.dependencies.react,
-          sanity: packageJson.dependencies['@sanity/client']
-        },
-        endpoints: {
-          api: apiStatus,
-          images: imagesStatus,
-          static: staticStatus
         }
       }
     };
 
-    // 問題がある場合はログ出力
-    if (issues.length > 0) {
-      console.warn('Health check issues:', issues);
-    }
-
     return NextResponse.json(
       {
-        ...detailedStatus,
+        ...healthStatus,
         issues: issues.length > 0 ? issues : undefined
       },
       {
@@ -207,7 +114,7 @@ export async function GET(request: Request) {
       }
     );
   } catch (error) {
-    console.error('Detailed health check error:', error);
+    console.error('Health check error:', error);
 
     return NextResponse.json(
       {
