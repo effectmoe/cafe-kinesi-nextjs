@@ -14,10 +14,14 @@ const BlogCard = ({ image, title, excerpt, date, slug, className }: BlogCardProp
     <article className={`group cursor-pointer ${className}`}>
       <div className="aspect-[4/3] overflow-hidden mb-4">
         <img
-          src={image}
+          src={image.startsWith('/') && !image.startsWith('/placeholder') ? '/placeholder.svg' : image}
           alt={title}
           loading="lazy"
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.src = '/placeholder.svg';
+          }}
         />
       </div>
       <div className="space-y-3">
