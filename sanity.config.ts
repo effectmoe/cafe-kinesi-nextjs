@@ -72,4 +72,11 @@ export default defineConfig({
 
   // トークン設定（パブリッシュ機能に必要）
   token: process.env.SANITY_API_TOKEN,
+
+  // フォーム設定
+  form: {
+    image: {
+      directUploads: true, // 直接アップロードを有効化
+    },
+  },
 })

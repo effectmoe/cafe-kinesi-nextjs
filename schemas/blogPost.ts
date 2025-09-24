@@ -75,11 +75,11 @@ export default defineType({
       name: 'mainImage',
       title: 'メイン画像',
       type: 'image',
+      description: '記事のメイン画像（オプション）',
       options: {
         hotspot: true,
-        metadata: ['dimensions'], // メタデータを最小限に
       },
-      validation: (Rule: any) => Rule.required(),
+      // 必須ではなくオプションに変更
     },
     {
       name: 'gallery',
@@ -91,7 +91,6 @@ export default defineType({
           type: 'image',
           options: {
             hotspot: true,
-            metadata: ['dimensions'], // メタデータを最小限に
           },
           fields: [
             {
@@ -105,7 +104,7 @@ export default defineType({
         },
       ],
       options: {
-        layout: 'list', // grid → list で軽量化
+        layout: 'grid',
       },
     },
     {
@@ -114,8 +113,8 @@ export default defineType({
       type: 'image',
       description: 'SNSシェア時に表示される画像（1200x630px推奨）',
       options: {
-        hotspot: false,
-        accept: 'image/png,image/jpeg,image/webp',
+        hotspot: true,
+        storeOriginalFilename: false,
       },
     },
     {
