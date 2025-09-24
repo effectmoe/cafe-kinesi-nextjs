@@ -5,8 +5,8 @@ import SocialLinks from "@/components/SocialLinks";
 import BlogList from '@/components/pages/BlogList';
 
 // ISR（Incremental Static Regeneration）設定
-// 10分ごとにブログ一覧を再生成（新着記事の反映を早くするため）
-export const revalidate = 600;
+// 1分ごとに再生成（開発中は短く設定）
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: 'Blog - Cafe Kinesi',

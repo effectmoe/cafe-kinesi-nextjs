@@ -6,8 +6,8 @@ import SocialLinks from "@/components/SocialLinks";
 import Footer from "@/components/Footer";
 
 // ISR（Incremental Static Regeneration）設定
-// 30分ごとにホームページを再生成
-export const revalidate = 1800;
+// 1分ごとに再生成（開発中は短く設定）
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: 'Cafe Kinesi - キネシオロジーとアロマのセラピー',

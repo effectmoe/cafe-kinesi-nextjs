@@ -8,8 +8,8 @@ import { client } from '@/lib/sanity';
 import { BLOG_POST_BY_SLUG_QUERY } from '@/lib/queries';
 
 // ISR（Incremental Static Regeneration）を使用
-// 1時間ごとに再生成
-export const revalidate = 3600;
+// 1分ごとに再生成（開発中は短く設定）
+export const revalidate = 60;
 
 interface BlogPageProps {
   params: Promise<{
