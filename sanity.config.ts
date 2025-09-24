@@ -15,17 +15,9 @@ export default defineConfig({
   dataset,
 
   plugins: [
-    structureTool({
-      // 構造化表示の最適化
-      defaultDocumentNode: () => null, // 不要なプレビューを無効
-    }),
+    structureTool(),
     presentationTool({
-      previewUrl: {
-        origin: 'https://cafe-kinesi-nextjs.vercel.app',
-        draftMode: {
-          enable: '/api/draft'
-        }
-      },
+      previewUrl: 'https://cafe-kinesi-nextjs.vercel.app/api/draft',
       resolve: {
         mainDocuments: defineDocuments([
           {
