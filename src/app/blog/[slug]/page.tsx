@@ -9,7 +9,6 @@ import { BLOG_POST_BY_SLUG_QUERY } from '@/lib/queries';
 
 // 動的レンダリングを強制
 export const dynamic = 'force-dynamic';
-export const revalidate = 0;
 
 interface BlogPageProps {
   params: Promise<{
