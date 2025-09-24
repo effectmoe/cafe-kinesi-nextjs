@@ -200,11 +200,11 @@ export default async function BlogPage({ params }: BlogPageProps) {
 
     try {
       console.log('Rendering components for:', slug);
+
       return (
         <div className="min-h-screen bg-white">
           <Header />
           <main>
-            {console.log('Rendering ArticleJsonLd...')}
             <ArticleJsonLd
               title={processedPost.title || 'Blog Post'}
               description={processedPost.excerpt || processedPost.tldr || ''}
@@ -213,7 +213,6 @@ export default async function BlogPage({ params }: BlogPageProps) {
               author={processedPost.author?.name}
               url={`https://cafe-kinesi.com/blog/${slug}`}
             />
-            {console.log('Rendering BlogPostServer...')}
             <BlogPostServer post={processedPost} />
           </main>
         <Footer />
