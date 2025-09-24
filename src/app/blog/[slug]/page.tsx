@@ -26,13 +26,21 @@ export async function generateStaticParams() {
       }
     `);
 
-    const sanitySlugs = posts.map((post: any) => ({
-      slug: post.slug,
-    }));
+    if (!posts || !Array.isArray(posts)) {
+      console.log('No posts found or invalid response from Sanity');
+      return [];
+    }
 
+    const sanitySlugs = posts
+      .filter((post: any) => post && post.slug)
+      .map((post: any) => ({
+        slug: post.slug,
+      }));
+
+    console.log('Generated static params for slugs:', sanitySlugs);
     return sanitySlugs;
   } catch (error) {
-    console.log('Sanityデータ取得エラー:', error);
+    console.error('Sanityデータ取得エラー:', error);
     return [];
   }
 }
@@ -103,15 +111,35 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
 }
 
 export default async function BlogPage({ params }: BlogPageProps) {
-  const { slug } = await params;
-
   try {
+    const { slug } = await params;
+
+    // デバッグログ
+    if (typeof window === 'undefined') {
+      console.log(`Fetching blog post with slug: ${slug}`);
+    }
+
     // Sanityから記事データを取得
-    const post = await client.fetch(BLOG_POST_BY_SLUG_QUERY, { slug });
+    const post = await client.fetch(BLOG_POST_BY_SLUG_QUERY, { slug }).catch((err) => {
+      console.error('Sanity fetch error:', err);
+      return null;
+    });
 
     // 記事が存在しない場合は404を表示
     if (!post) {
+      if (typeof window === 'undefined') {
+        console.log(`Post not found for slug: ${slug}`);
+      }
       notFound();
+    }
+
+    // mainImageの処理
+    let processedPost = { ...post };
+    if (post.mainImage && typeof post.mainImage === 'object') {
+      // mainImageが適切な形式か確認
+      if (!post.mainImage._type || !post.mainImage.asset) {
+        processedPost.mainImage = null;
+      }
     }
 
     return (
@@ -119,20 +147,21 @@ export default async function BlogPage({ params }: BlogPageProps) {
         <Header />
         <main>
           <ArticleJsonLd
-            title={post.title}
-            description={post.excerpt || post.tldr}
-            image={post.mainImage}
-            publishedAt={post.publishedAt}
-            author={post.author?.name}
+            title={processedPost.title || 'Blog Post'}
+            description={processedPost.excerpt || processedPost.tldr || ''}
+            image={processedPost.mainImage}
+            publishedAt={processedPost.publishedAt}
+            author={processedPost.author?.name}
             url={`https://cafe-kinesi.com/blog/${slug}`}
           />
-          <BlogPostServer post={post} />
+          <BlogPostServer post={processedPost} />
         </main>
         <Footer />
       </div>
     );
   } catch (error) {
     console.error('ブログページ生成エラー:', error);
+    console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace');
     notFound();
   }
 }
