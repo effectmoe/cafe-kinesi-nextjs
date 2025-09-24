@@ -1,5 +1,5 @@
 import { DefaultDocumentNodeResolver } from 'sanity/structure'
-import Iframe from 'sanity-plugin-iframe-pane'
+import { iframePane } from 'sanity-plugin-iframe-pane'
 
 export const defaultDocumentNode: DefaultDocumentNodeResolver = (S, {schemaType}) => {
   switch (schemaType) {
@@ -7,7 +7,7 @@ export const defaultDocumentNode: DefaultDocumentNodeResolver = (S, {schemaType}
       return S.document().views([
         S.view.form(),
         S.view
-          .component(Iframe)
+          .component(iframePane)
           .options({
             url: (doc: any) => doc?.slug?.current
               ? `https://cafe-kinesi-nextjs.vercel.app/api/preview?slug=${doc.slug.current}&type=blogPost`
@@ -22,7 +22,7 @@ export const defaultDocumentNode: DefaultDocumentNodeResolver = (S, {schemaType}
       return S.document().views([
         S.view.form(),
         S.view
-          .component(Iframe)
+          .component(iframePane)
           .options({
             url: (doc: any) => doc?.slug?.current
               ? `https://cafe-kinesi-nextjs.vercel.app/api/preview?slug=${doc.slug.current}&type=news`
