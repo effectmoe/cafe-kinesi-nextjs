@@ -198,3 +198,32 @@ img {
   outline: 2px solid hsl(var(--ring));
   outline-offset: 2px;
 }
+
+/* リンクカードとサムネイル画像の青枠を削除 */
+a:focus,
+a:focus-visible {
+  outline: none !important;
+}
+
+/* ブログカードと画像の青枠を削除 */
+.group:focus,
+.group:focus-visible,
+article:focus,
+article:focus-visible,
+img:focus,
+img:focus-visible {
+  outline: none !important;
+}
+
+/* リンク内の画像の青枠を削除 */
+a img,
+a > * {
+  outline: none !important;
+}
+
+/* ブロックリンクの青枠とシャドウを削除 */
+a.block:focus,
+a.block:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
