@@ -11,6 +11,14 @@ const BlogSection = async () => {
       query: BLOG_POSTS_QUERY,
       params: {},
     });
+
+    // デバッグ: 取得したデータを確認
+    console.log('Fetched blog posts:', posts.map((p: any) => ({
+      title: p.title,
+      excerpt: p.excerpt,
+      hasExcerpt: !!p.excerpt,
+      excerptType: typeof p.excerpt
+    })));
   } catch (error) {
     console.error('Error fetching blog posts:', error);
   }

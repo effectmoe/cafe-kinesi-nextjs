@@ -65,6 +65,13 @@ const BlogPostServer = ({ post }: BlogPostProps) => {
                 </time>
               </header>
 
+              {/* 抜粋 */}
+              {post.excerpt && (
+                <div className="mb-8 text-lg text-gray-600 leading-relaxed">
+                  {post.excerpt}
+                </div>
+              )}
+
               {/* TL;DR セクション */}
               {post.tldr && (
                 <section className="mb-8 p-6 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
@@ -94,13 +101,9 @@ const BlogPostServer = ({ post }: BlogPostProps) => {
                 {/* PortableText コンテンツの表示 */}
                 {post.content ? (
                   <PortableTextContent value={post.content} />
-                ) : post.excerpt ? (
-                  <div className="prose prose-lg max-w-none">
-                    <p className="text-gray-700 leading-relaxed">{post.excerpt}</p>
-                  </div>
                 ) : (
                   <div className="text-gray-500 italic">
-                    コンテンツがありません
+                    本文コンテンツがありません
                   </div>
                 )}
               </div>
