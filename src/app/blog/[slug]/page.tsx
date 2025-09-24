@@ -68,16 +68,8 @@ export default async function BlogPage({ params }: BlogPageProps) {
     return (
       <div className="min-h-screen bg-white">
         <Header />
-        <main className="container mx-auto px-4 py-16">
-          <h1 className="text-4xl font-bold mb-4">{post.title || 'No Title'}</h1>
-          {post.excerpt && (
-            <p className="text-gray-600 mb-8">{post.excerpt}</p>
-          )}
-          <div className="prose max-w-none">
-            <p>Post slug: {post.slug}</p>
-            <p>Content exists: {post.content ? 'Yes' : 'No'}</p>
-            <p>Content type: {typeof post.content}</p>
-          </div>
+        <main>
+          <BlogPostServer post={post} />
         </main>
         <Footer />
       </div>
