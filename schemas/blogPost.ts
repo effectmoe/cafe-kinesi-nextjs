@@ -186,7 +186,8 @@ export default {
             select: {
               title: 'question'
             },
-            prepare({title}) {
+            prepare(selection: any) {
+              const {title} = selection;
               return {
                 title: title || 'FAQ項目',
                 subtitle: 'Q&A'
