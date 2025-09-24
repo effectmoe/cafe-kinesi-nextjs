@@ -6,6 +6,17 @@ interface BlogPostProps {
 }
 
 const BlogPostServer = ({ post }: BlogPostProps) => {
+  // 画像URLの安全な生成
+  const getImageSrc = (image: any) => {
+    if (!image) return '/placeholder.svg';
+    try {
+      const url = urlFor(image).width(800).height(400).url();
+      return url || '/placeholder.svg';
+    } catch (error) {
+      console.warn('Error generating image URL:', error);
+      return '/placeholder.svg';
+    }
+  };
   if (!post) {
     return (
       <div className="container mx-auto px-4 py-16">
@@ -24,11 +35,12 @@ const BlogPostServer = ({ post }: BlogPostProps) => {
               {post.mainImage && (
                 <div className="mb-8">
                   <Image
-                    src={urlFor(post.mainImage).width(800).height(400).url()}
-                    alt={post.title}
+                    src={getImageSrc(post.mainImage)}
+                    alt={post.title || 'Blog post image'}
                     width={800}
                     height={400}
                     className="w-full rounded-lg"
+                    priority
                   />
                 </div>
               )}

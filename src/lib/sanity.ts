@@ -84,5 +84,11 @@ export const urlFor = (source: any) => {
 // 画像URL生成のヘルパー関数
 export const getImageUrl = (image: any, width = 800, height = 600) => {
   if (!image) return null
-  return urlFor(image).width(width).height(height).fit('crop').auto('format').url()
+  try {
+    const url = urlFor(image).width(width).height(height).fit('crop').auto('format').url()
+    return url || null
+  } catch (error) {
+    console.warn('Error generating image URL:', error)
+    return null
+  }
 }
