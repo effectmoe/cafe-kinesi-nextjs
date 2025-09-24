@@ -15,35 +15,26 @@ export default defineConfig({
   dataset,
 
   plugins: [
-    structureTool({
-      structure: (S) =>
-        S.list()
-          .title('コンテンツ')
-          .items([
-            S.listItem()
-              .title('ブログ記事')
-              .id('blogPost')
-              .child(
-                S.documentTypeList('blogPost')
-                  .title('ブログ記事')
-                  .defaultOrdering([{ field: 'publishedAt', direction: 'desc' }])
-              ),
-            S.listItem()
-              .title('お知らせ')
-              .id('news')
-              .child(
-                S.documentTypeList('news')
-                  .title('お知らせ')
-                  .defaultOrdering([{ field: 'publishedAt', direction: 'desc' }])
-              ),
-            ...S.documentTypeListItems().filter(
-              (listItem) =>
-                !['blogPost', 'news'].includes(listItem.getId() || '')
-            ),
-          ])
-    }),
+    structureTool(),
     presentationTool({
-      previewUrl: 'https://cafe-kinesi-nextjs.vercel.app/api/draft',
+      previewUrl: {
+        origin: 'https://cafe-kinesi-nextjs.vercel.app',
+        previewMode: {
+          enable: '/api/draft',
+        },
+      },
+      resolve: {
+        mainDocuments: defineDocuments([
+          {
+            route: '/blog/:slug',
+            filter: `_type == "blogPost" && slug.current == $slug`,
+          },
+          {
+            route: '/news/:slug',
+            filter: `_type == "news" && slug.current == $slug`,
+          },
+        ])
+      }
     }),
     visionTool()
   ],
@@ -62,28 +53,6 @@ export default defineConfig({
   // デフォルトのパブリッシュアクションとプレビューを有効化
   document: {
     actions: (prev, context) => {
-      // プレビューアクションを確実に含める
-      if (context.schemaType === 'blogPost' || context.schemaType === 'news') {
-        return prev.map((action) => {
-          if (action.action === 'publish') {
-            return action
-          }
-          return action
-        })
-      }
-      return prev
-    },
-    productionUrl: async (prev, context) => {
-      const { document } = context
-      if (document && typeof document === 'object') {
-        const doc = document as any
-        if (doc._type === 'blogPost' && doc.slug?.current) {
-          return `https://cafe-kinesi-nextjs.vercel.app/blog/${doc.slug.current}`
-        }
-        if (doc._type === 'news' && doc.slug?.current) {
-          return `https://cafe-kinesi-nextjs.vercel.app/news/${doc.slug.current}`
-        }
-      }
       return prev
     }
   },
