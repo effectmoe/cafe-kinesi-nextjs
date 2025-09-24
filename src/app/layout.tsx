@@ -10,6 +10,7 @@ import { Analytics } from './analytics'
 import { WebVitals } from './reportWebVitals'
 import { VercelAnalytics } from './vercel-analytics'
 import { VercelSpeedInsights } from './speed-insights'
+import { ErrorLoggerInit } from './error-logger-init'
 
 // フォント最適化設定
 const notoSansJP = Noto_Sans_JP({
@@ -137,6 +138,7 @@ export default function RootLayout({
         <WebVitals />
         <VercelAnalytics />
         <VercelSpeedInsights />
+        <ErrorLoggerInit />
       </body>
     </html>
   )
