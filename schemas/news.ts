@@ -21,6 +21,12 @@ export default {
       options: {
         source: 'title',
         maxLength: 96,
+        slugify: (input: string) => {
+          return input
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '')
+        }
       },
       validation: (Rule: any) => Rule.required(),
     },

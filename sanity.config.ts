@@ -1,7 +1,7 @@
 import {defineConfig} from 'sanity'
 import {structureTool} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
-import {presentationTool, defineDocuments} from 'sanity/presentation'
+import {presentationTool} from 'sanity/presentation'
 import {schemaTypes} from './schemas'
 
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'e4aqw590'
@@ -17,24 +17,7 @@ export default defineConfig({
   plugins: [
     structureTool(),
     presentationTool({
-      previewUrl: {
-        origin: 'https://cafe-kinesi-nextjs.vercel.app',
-        previewMode: {
-          enable: '/api/draft',
-        },
-      },
-      resolve: {
-        mainDocuments: defineDocuments([
-          {
-            route: '/blog/:slug',
-            filter: `_type == "blogPost" && slug.current == $slug`,
-          },
-          {
-            route: '/news/:slug',
-            filter: `_type == "news" && slug.current == $slug`,
-          },
-        ])
-      }
+      previewUrl: 'https://cafe-kinesi-nextjs.vercel.app/api/draft'
     }),
     visionTool()
   ],
