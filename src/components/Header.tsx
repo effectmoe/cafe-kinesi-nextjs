@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 
@@ -13,9 +14,16 @@ const Header = () => {
     <header className="bg-white border-b border-gray-100">
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          {/* シンプルなロゴテキスト */}
-          <Link href="/" className="text-2xl font-light text-gray-800 hover:text-gray-600 transition-colors">
-            Cafe Kinesi
+          {/* ロゴ画像 */}
+          <Link href="/" className="flex items-center hover:opacity-80 transition-opacity">
+            <Image
+              src="/logo.jpeg"
+              alt="Cafe Kinesi"
+              width={150}
+              height={50}
+              className="h-12 w-auto"
+              priority
+            />
           </Link>
 
           {/* 右側のナビゲーション - ミニマル */}
