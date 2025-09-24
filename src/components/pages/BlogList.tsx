@@ -1,24 +1,18 @@
-'use client';
-
 import BlogCard from "@/components/BlogCard";
-import { useSanityData } from '@/hooks/useSanityData';
+import { sanityFetch } from '@/lib/sanity';
 import { BLOG_POSTS_QUERY } from '@/lib/queries';
 
-const BlogList = () => {
-  const { data: blogPosts, isLoading } = useSanityData(
-    BLOG_POSTS_QUERY,
-    'blogPosts'
-  );
+const BlogList = async () => {
+  let posts = [];
 
-  if (isLoading) {
-    return (
-      <div className="w-full max-w-screen-xl mx-auto px-6 py-12">
-        <div className="text-center">読み込み中...</div>
-      </div>
-    );
+  try {
+    posts = await sanityFetch({
+      query: BLOG_POSTS_QUERY,
+      revalidate: 600, // 10分でキャッシュ更新
+    });
+  } catch (error) {
+    console.error('Error fetching blog posts:', error);
   }
-
-  const posts = blogPosts || [];
 
   return (
     <div className="w-full max-w-screen-xl mx-auto px-6 py-12">

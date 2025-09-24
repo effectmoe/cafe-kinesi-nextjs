@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function BlogListPage() {
+export default async function BlogListPage() {
   return (
     <div className="min-h-screen bg-white">
       <Header />
