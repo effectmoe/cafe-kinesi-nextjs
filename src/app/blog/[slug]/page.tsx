@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import BlogPost from '@/components/pages/BlogPost';
+import BlogPostServer from '@/components/BlogPostServer';
 import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 import { client } from '@/lib/sanity';
 import { BLOG_POST_BY_SLUG_QUERY, BLOG_POSTS_QUERY } from '@/lib/queries';
@@ -126,7 +126,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
             author={post.author?.name}
             url={`https://cafe-kinesi.com/blog/${slug}`}
           />
-          <BlogPost slug={slug} />
+          <BlogPostServer post={post} />
         </main>
         <Footer />
       </div>
