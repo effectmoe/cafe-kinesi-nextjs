@@ -4,7 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BlogPostServer from '@/components/BlogPostServer';
 import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
-import { client } from '@/lib/sanity';
+import { client, getImageUrl } from '@/lib/sanity';
 import { BLOG_POST_BY_SLUG_QUERY } from '@/lib/queries';
 
 // 動的レンダリングを強制
@@ -142,7 +142,6 @@ export default async function BlogPage({ params }: BlogPageProps) {
         processedPost.mainImage = null;
       } else {
         // getImageUrl関数を使ってURLを生成
-        const { getImageUrl } = await import('@/lib/sanity');
         processedPost.mainImage = getImageUrl(post.mainImage) || null;
       }
     }
@@ -188,10 +187,10 @@ export default async function BlogPage({ params }: BlogPageProps) {
             <ArticleJsonLd
               title={processedPost.title || 'Blog Post'}
               description={processedPost.excerpt || processedPost.tldr || ''}
-              image={typeof processedPost.mainImage === 'string' ? processedPost.mainImage : undefined}
+              image={processedPost.mainImage}
               publishedAt={processedPost.publishedAt || new Date().toISOString()}
               author={processedPost.author?.name}
-              url={`https://cafe-kinesi.com/blog/${typeof processedPost.slug === 'string' ? processedPost.slug : slug}`}
+              url={`https://cafe-kinesi.com/blog/${processedPost.slug}`}
             />
             <BlogPostServer post={processedPost} />
           </main>
