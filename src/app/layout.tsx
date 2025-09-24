@@ -1,10 +1,12 @@
 import type { Metadata } from 'next'
 import { Noto_Sans_JP, Noto_Serif_JP } from 'next/font/google'
+import { draftMode } from 'next/headers'
 import Script from 'next/script'
 import './globals.css'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { Toaster } from '@/components/ui/toaster'
 import { Toaster as Sonner } from '@/components/ui/sonner'
+import LiveVisualEditing from '@/components/VisualEditing'
 // import { ReactQueryProvider } from '@/components/providers/ReactQueryProvider'
 import { Analytics } from './analytics'
 import { WebVitals } from './reportWebVitals'
@@ -72,6 +74,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const { isEnabled: isDraft } = draftMode();
   const organizationJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
@@ -137,6 +140,7 @@ export default function RootLayout({
         <VercelAnalytics />
         <VercelSpeedInsights />
         <ErrorLoggerInit />
+        {isDraft && <LiveVisualEditing />}
       </body>
     </html>
   )

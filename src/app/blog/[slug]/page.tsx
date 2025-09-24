@@ -1,11 +1,12 @@
 import { Metadata } from 'next';
 import { notFound } from "next/navigation";
+import { draftMode } from 'next/headers';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BlogPostServer from '@/components/BlogPostServer';
 import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
-import { client } from '@/lib/sanity';
-import { BLOG_POST_BY_SLUG_QUERY } from '@/lib/queries';
+import { sanityFetch } from '@/lib/sanity';
+import { BLOG_POST_BY_SLUG_QUERY, BLOG_POST_PREVIEW_QUERY } from '@/lib/queries';
 
 // 動的レンダリングを強制
 export const dynamic = 'force-dynamic';
@@ -19,7 +20,15 @@ interface BlogPageProps {
 export async function generateMetadata({ params }: BlogPageProps): Promise<Metadata> {
   try {
     const { slug } = await params;
-    const post = await client.fetch(BLOG_POST_BY_SLUG_QUERY, { slug });
+    const { isEnabled: isDraft } = draftMode();
+
+    // ドラフトモードの場合は専用クエリを使用
+    const query = isDraft ? BLOG_POST_PREVIEW_QUERY : BLOG_POST_BY_SLUG_QUERY;
+    const post = await sanityFetch({
+      query,
+      params: { slug },
+      isDraftMode: isDraft
+    });
 
     if (!post) {
       return {
@@ -49,9 +58,15 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
 export default async function BlogPage({ params }: BlogPageProps) {
   try {
     const { slug } = await params;
+    const { isEnabled: isDraft } = draftMode();
 
-    // Sanityから記事データを取得
-    const post = await client.fetch(BLOG_POST_BY_SLUG_QUERY, { slug });
+    // ドラフトモードの場合は専用クエリを使用
+    const query = isDraft ? BLOG_POST_PREVIEW_QUERY : BLOG_POST_BY_SLUG_QUERY;
+    const post = await sanityFetch({
+      query,
+      params: { slug },
+      isDraftMode: isDraft
+    });
 
     if (!post) {
       notFound();
@@ -60,6 +75,14 @@ export default async function BlogPage({ params }: BlogPageProps) {
     return (
       <div className="min-h-screen bg-white">
         <Header />
+        {isDraft && (
+          <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 text-center">
+            プレビューモード - 下書きコンテンツが表示されています
+            <a href="/api/disable-draft" className="ml-2 underline">
+              プレビューを終了
+            </a>
+          </div>
+        )}
         <main>
           <ArticleJsonLd
             title={post.title || 'Blog Post'}

@@ -72,15 +72,28 @@ export const client = createClient({
   perspective: 'published',
 })
 
+// プレビュー用クライアント（ドラフト表示用）
+export const previewClient = createClient({
+  projectId,
+  dataset,
+  apiVersion,
+  useCdn: false, // プレビューでは常に最新データを取得
+  token: process.env.SANITY_API_TOKEN,
+  perspective: 'previewDrafts',
+})
+
 // サーバーコンポーネント用のsanityFetch関数
 export async function sanityFetch<QueryResponse = any>({
   query,
   params = {},
+  isDraftMode = false,
 }: {
   query: string
   params?: any
+  isDraftMode?: boolean
 }) {
-  return client.fetch<QueryResponse>(query, params)
+  const targetClient = isDraftMode ? previewClient : client
+  return targetClient.fetch<QueryResponse>(query, params)
 }
 
 // 後方互換性のため
