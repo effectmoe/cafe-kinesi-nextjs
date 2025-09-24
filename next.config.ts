@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // 画像最適化
   images: {
     remotePatterns: [
       {
@@ -14,29 +15,75 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
     ],
-    // 画像フォーマットの最適化
     formats: ['image/webp', 'image/avif'],
-    // デバイスサイズの詳細設定
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
-    // 画像サイズの詳細設定
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    // 画像の最小化
-    minimumCacheTTL: 60,
+    minimumCacheTTL: 31536000, // 1年
   },
-  // gzip/brotli圧縮を有効化
+
+  // パフォーマンス設定
   compress: true,
-  // X-Powered-Byヘッダーを削除
   poweredByHeader: false,
-  // React Strict Modeを有効化
   reactStrictMode: true,
-  // SWCによる最小化を有効化
   swcMinify: true,
+
+  // セキュリティヘッダー
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'origin-when-cross-origin',
+          },
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=()',
+          },
+        ],
+      },
+    ];
+  },
+
+  // キャッシュ設定
+  async rewrites() {
+    return [
+      {
+        source: '/sitemap.xml',
+        destination: '/api/sitemap',
+      },
+    ];
+  },
+
   // パッケージインポートの最適化
   transpilePackages: ['lucide-react'],
+
+  // 実験的機能
   experimental: {
-    // パフォーマンス最適化
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
   },
+
+  // バンドル分析（開発時のみ）
+  ...(process.env.ANALYZE === 'true' && {
+    webpack: (config, { isServer }) => {
+      if (!isServer) {
+        const BundleAnalyzerPlugin = require('@next/bundle-analyzer')({
+          enabled: true,
+        });
+        config.plugins.push(new BundleAnalyzerPlugin());
+      }
+      return config;
+    },
+  }),
 };
 
 export default nextConfig;
