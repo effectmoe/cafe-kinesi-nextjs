@@ -12,7 +12,8 @@ export async function GET(request: Request) {
   // }
 
   // ドラフトモードを有効化
-  draftMode().enable()
+  const draft = await draftMode()
+  draft.enable()
 
   // プレビューページにリダイレクト
   if (slug) {

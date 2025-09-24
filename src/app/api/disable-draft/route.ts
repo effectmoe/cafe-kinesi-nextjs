@@ -3,7 +3,8 @@ import { redirect } from 'next/navigation'
 
 export async function GET() {
   // ドラフトモードを無効化
-  draftMode().disable()
+  const draft = await draftMode()
+  draft.disable()
 
   // ホームページにリダイレクト
   redirect('/')

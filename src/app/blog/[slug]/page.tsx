@@ -20,7 +20,7 @@ interface BlogPageProps {
 export async function generateMetadata({ params }: BlogPageProps): Promise<Metadata> {
   try {
     const { slug } = await params;
-    const { isEnabled: isDraft } = draftMode();
+    const { isEnabled: isDraft } = await draftMode();
 
     // ドラフトモードの場合は専用クエリを使用
     const query = isDraft ? BLOG_POST_PREVIEW_QUERY : BLOG_POST_BY_SLUG_QUERY;
@@ -58,7 +58,7 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
 export default async function BlogPage({ params }: BlogPageProps) {
   try {
     const { slug } = await params;
-    const { isEnabled: isDraft } = draftMode();
+    const { isEnabled: isDraft } = await draftMode();
 
     // ドラフトモードの場合は専用クエリを使用
     const query = isDraft ? BLOG_POST_PREVIEW_QUERY : BLOG_POST_BY_SLUG_QUERY;
