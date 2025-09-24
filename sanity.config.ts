@@ -18,23 +18,10 @@ export default defineConfig({
     structureTool(),
     presentationTool({
       previewUrl: {
-        origin: 'https://cafe-kinesi-nextjs.vercel.app',
         previewMode: {
-          enable: '/api/draft',
-        },
-      },
-      resolve: {
-        mainDocuments: [
-          {
-            route: '/blog/:slug',
-            filter: `_type == "blogPost" && slug.current == $slug`,
-          },
-          {
-            route: '/news/:slug',
-            filter: `_type == "news" && slug.current == $slug`,
-          },
-        ],
-      },
+          enable: 'https://cafe-kinesi-nextjs.vercel.app/api/enable-draft',
+        }
+      }
     }),
     visionTool()
   ],
