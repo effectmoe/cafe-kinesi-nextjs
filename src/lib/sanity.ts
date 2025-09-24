@@ -76,21 +76,11 @@ export const client = createClient({
 export async function sanityFetch<QueryResponse = any>({
   query,
   params = {},
-  revalidate = 60, // 60秒ごとに再検証
-  tags = [],
 }: {
   query: string
   params?: any
-  revalidate?: number | false
-  tags?: string[]
 }) {
-  return client.fetch<QueryResponse>(query, params, {
-    cache: revalidate === false || revalidate === 0 ? 'no-store' : 'force-cache',
-    next: {
-      revalidate: tags.length ? false : revalidate,
-      tags,
-    },
-  } as any)
+  return client.fetch<QueryResponse>(query, params)
 }
 
 // 後方互換性のため

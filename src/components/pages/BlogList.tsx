@@ -8,7 +8,7 @@ const BlogList = async () => {
   try {
     posts = await sanityFetch({
       query: BLOG_POSTS_QUERY,
-      revalidate: 600, // 10分でキャッシュ更新
+      params: {},
     });
   } catch (error) {
     console.error('Error fetching blog posts:', error);

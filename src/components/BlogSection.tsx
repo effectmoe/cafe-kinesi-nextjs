@@ -9,7 +9,7 @@ const BlogSection = async () => {
   try {
     posts = await sanityFetch({
       query: BLOG_POSTS_QUERY,
-      revalidate: 1800, // 30分でキャッシュ更新
+      params: {},
     });
   } catch (error) {
     console.error('Error fetching blog posts:', error);
