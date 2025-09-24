@@ -7,12 +7,7 @@ import BlogPostServer from '@/components/BlogPostServer';
 import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 import { sanityFetch } from '@/lib/sanity';
 import { BLOG_POST_BY_SLUG_QUERY, BLOG_POST_PREVIEW_QUERY } from '@/lib/queries';
-import dynamic from 'next/dynamic';
-
-// Visual Editingを動的にインポート
-const VisualEditing = dynamic(() => import('@/components/VisualEditing'), {
-  ssr: false,
-});
+import VisualEditing from '@/components/VisualEditing';
 
 // 動的レンダリングを強制
 export const revalidate = 0;
