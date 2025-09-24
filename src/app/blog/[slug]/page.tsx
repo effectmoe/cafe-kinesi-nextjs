@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import BlogPostServer from '@/components/BlogPostServer';
 import { client } from '@/lib/sanity';
 import { BLOG_POST_BY_SLUG_QUERY } from '@/lib/queries';
 

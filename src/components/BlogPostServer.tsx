@@ -1,12 +1,6 @@
 import Image from 'next/image';
-import dynamic from 'next/dynamic';
 import { urlFor } from '@/lib/sanity';
-
-// PortableTextコンポーネントを動的インポート
-const PortableTextContent = dynamic(() => import('./PortableTextContent'), {
-  ssr: true,
-  loading: () => <div className="animate-pulse bg-gray-100 h-20 rounded"></div>
-});
+import PortableTextContent from './PortableTextContent';
 
 interface BlogPostProps {
   post: any;
@@ -103,14 +97,7 @@ const BlogPostServer = ({ post }: BlogPostProps) => {
 
               {/* メインコンテンツ */}
               <div className="mb-12">
-                {/* PortableText コンテンツの表示 */}
-                {post.content ? (
-                  <PortableTextContent value={post.content} />
-                ) : (
-                  <div className="text-gray-500 italic">
-                    本文コンテンツがありません
-                  </div>
-                )}
+                <PortableTextContent value={post.content} />
               </div>
 
               {/* 重要なポイント */}

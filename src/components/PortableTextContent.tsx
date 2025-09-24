@@ -113,14 +113,27 @@ interface PortableTextContentProps {
 
 const PortableTextContent = ({ value, className = '' }: PortableTextContentProps) => {
   if (!value) {
-    return null;
+    return (
+      <div className="text-gray-500 italic">
+        本文コンテンツがありません
+      </div>
+    );
   }
 
-  return (
-    <div className={`prose prose-lg max-w-none ${className}`}>
-      <PortableText value={value} components={components} />
-    </div>
-  );
+  try {
+    return (
+      <div className={`prose prose-lg max-w-none ${className}`}>
+        <PortableText value={value} components={components} />
+      </div>
+    );
+  } catch (error) {
+    console.error('PortableText rendering error:', error);
+    return (
+      <div className="text-red-500">
+        コンテンツの表示中にエラーが発生しました
+      </div>
+    );
+  }
 };
 
 export default PortableTextContent;
