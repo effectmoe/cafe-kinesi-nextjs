@@ -61,7 +61,7 @@ export default defineConfig({
         }
       }
 
-      return null
+      return prev
     }
   },
 
