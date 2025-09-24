@@ -1,4 +1,4 @@
-import { createClient } from '@sanity/client'
+import { createClient } from 'next-sanity'
 import imageUrlBuilder from '@sanity/image-url'
 
 // デバッグ用ログ（ビルド時のみ）
@@ -68,8 +68,12 @@ export const client = createClient({
   projectId,
   dataset,
   apiVersion,
-  useCdn: process.env.NODE_ENV === 'production', // 本番環境ではCDN使用
+  useCdn: process.env.NODE_ENV === 'production',
   perspective: 'published',
+  stega: {
+    enabled: process.env.NODE_ENV === 'development',
+    studioUrl: process.env.NEXT_PUBLIC_SANITY_STUDIO_URL || 'https://cafekinesi.sanity.studio',
+  },
 })
 
 // プレビュー用クライアント（ドラフト表示用）
@@ -77,9 +81,13 @@ export const previewClient = createClient({
   projectId,
   dataset,
   apiVersion,
-  useCdn: false, // プレビューでは常に最新データを取得
+  useCdn: false,
   token: process.env.SANITY_API_TOKEN,
   perspective: 'previewDrafts',
+  stega: {
+    enabled: true,
+    studioUrl: process.env.NEXT_PUBLIC_SANITY_STUDIO_URL || 'https://cafekinesi.sanity.studio',
+  },
 })
 
 // サーバーコンポーネント用のsanityFetch関数

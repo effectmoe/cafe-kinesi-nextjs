@@ -31,4 +31,18 @@ export default defineConfig({
   schema: {
     types: schemaTypes,
   },
+
+  // デフォルトのパブリッシュアクションを有効化
+  document: {
+    actions: (prev, context) => {
+      // すべてのドキュメントタイプでパブリッシュアクションを有効にする
+      return prev
+    }
+  },
+
+  // API設定を追加
+  api: {
+    projectId,
+    dataset,
+  },
 })

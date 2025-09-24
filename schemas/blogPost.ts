@@ -2,6 +2,9 @@ export default {
   name: 'blogPost',
   title: 'ブログ記事',
   type: 'document',
+
+  // パブリッシュ機能を明示的に有効化
+  liveEdit: false, // ドラフト機能を使用
   fields: [
     {
       name: 'title',
