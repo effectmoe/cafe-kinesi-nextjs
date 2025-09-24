@@ -90,8 +90,26 @@ export default {
     select: {
       title: 'title',
       slug: 'slug.current',
-      subtitle: 'publishedAt',
+      date: 'publishedAt',
       media: 'image',
+    },
+    prepare(selection: any) {
+      const {title, slug, date, media} = selection || {};
+      let dateFormatted = '未公開';
+
+      if (date) {
+        try {
+          dateFormatted = new Date(date).toLocaleDateString('ja-JP');
+        } catch (error) {
+          dateFormatted = '日付エラー';
+        }
+      }
+
+      return {
+        title: String(title || 'タイトルなし'),
+        subtitle: dateFormatted,
+        media: media || undefined,
+      };
     },
   },
   orderings: [

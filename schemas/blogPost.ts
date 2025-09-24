@@ -187,9 +187,9 @@ export default {
               title: 'question'
             },
             prepare(selection: any) {
-              const {title} = selection;
+              const {title} = selection || {};
               return {
-                title: title || 'FAQ項目',
+                title: String(title || 'FAQ項目'),
                 subtitle: 'Q&A'
               }
             }
@@ -281,12 +281,21 @@ export default {
       date: 'publishedAt',
     },
     prepare(selection: any) {
-      const {title, slug, author, media, date} = selection;
-      const dateFormatted = date ? new Date(date).toLocaleDateString('ja-JP') : '未公開';
+      const {title, slug, author, media, date} = selection || {};
+      let dateFormatted = '未公開';
+
+      if (date) {
+        try {
+          dateFormatted = new Date(date).toLocaleDateString('ja-JP');
+        } catch (error) {
+          dateFormatted = '日付エラー';
+        }
+      }
+
       return {
-        title,
-        subtitle: `${dateFormatted} ${author ? `・${author}` : ''}`,
-        media,
+        title: String(title || 'タイトルなし'),
+        subtitle: `${dateFormatted}${author ? ` ・ ${String(author)}` : ''}`,
+        media: media || undefined,
       };
     },
   },

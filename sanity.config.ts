@@ -39,7 +39,7 @@ export default defineConfig({
     types: schemaTypes,
   },
 
-  // パフォーマンス最適化
+  // パフォーマンス最適化とセキュリティ設定
   studio: {
     components: {
       // 軽量化設定
