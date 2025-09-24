@@ -3,9 +3,9 @@ import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BlogPost from '@/components/pages/BlogPost';
-import { localArticles } from '@/components/pages/BlogPost.data';
 import { ArticleJsonLd } from '@/components/seo/ArticleJsonLd';
 import { client } from '@/lib/sanity';
+import { BLOG_POST_BY_SLUG_QUERY, BLOG_POSTS_QUERY } from '@/lib/queries';
 
 // ISR（Incremental Static Regeneration）設定
 // 1時間ごとにページを再生成
@@ -18,12 +18,7 @@ interface BlogPageProps {
 }
 
 export async function generateStaticParams() {
-  // まずローカルの記事スラッグを取得
-  const localSlugs = Object.keys(localArticles).map((slug) => ({
-    slug,
-  }));
-
-  // Sanityから記事スラッグを取得（可能な場合）
+  // Sanityから記事スラッグを取得
   try {
     const posts = await client.fetch(`
       *[_type == "blogPost" && defined(slug.current)]{
@@ -35,17 +30,10 @@ export async function generateStaticParams() {
       slug: post.slug,
     }));
 
-    // ローカルとSanityのスラッグをマージ（重複を除去）
-    const allSlugs = new Map();
-    [...localSlugs, ...sanitySlugs].forEach(item => {
-      allSlugs.set(item.slug, item);
-    });
-
-    return Array.from(allSlugs.values());
+    return sanitySlugs;
   } catch (error) {
-    console.log('Sanityデータ取得をスキップ:', error);
-    // Sanityエラー時はローカルデータのみ返す
-    return localSlugs;
+    console.log('Sanityデータ取得エラー:', error);
+    return [];
   }
 }
 
@@ -53,64 +41,53 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
   try {
     const { slug } = await params;
 
-    // まずローカルデータから取得を試みる
-    const article = localArticles[slug];
+    // Sanityから記事データを取得
+    const post = await client.fetch(BLOG_POST_BY_SLUG_QUERY, { slug });
 
-    if (!article) {
-      // Sanityから取得を試みる（将来的な実装用）
-      // const post = await client.fetch(`
-      //   *[_type == "blogPost" && slug.current == $slug][0]{
-      //     title,
-      //     excerpt,
-      //     "image": mainImage.asset->url,
-      //     publishedAt,
-      //     author->{name},
-      //     categories[]->{title}
-      //   }
-      // `, { slug });
-
+    if (!post) {
       return {
         title: 'ページが見つかりません - Cafe Kinesi',
         description: '記事が見つかりませんでした',
       };
     }
 
-    // カテゴリーの取得（ローカルデータ用に簡易化）
-    const categories = article.category ? [article.category] : [];
+    const categories = post.category ? [post.category] : [];
+    const tags = post.tags || [];
 
     return {
-      title: `${article.title} - Cafe Kinesi Blog`,
-      description: article.excerpt || `${article.title}に関する記事です。`,
+      title: `${post.title} - Cafe Kinesi Blog`,
+      description: post.excerpt || post.tldr || `${post.title}に関する記事です。`,
       keywords: [
-        article.title,
+        post.title,
         'カフェキネシ',
         'アロマテラピー',
         '瞑想',
         'ヨガ',
-        ...categories
+        ...categories,
+        ...tags
       ],
-      authors: [{ name: article.author?.name || 'Cafe Kinesi' }],
+      authors: [{ name: post.author?.name || 'Cafe Kinesi' }],
       openGraph: {
-        title: article.title,
-        description: article.excerpt || `${article.title}に関する記事です。`,
+        title: post.title,
+        description: post.excerpt || post.tldr || `${post.title}に関する記事です。`,
         type: 'article',
-        publishedTime: article.publishedAt,
-        authors: [article.author?.name || 'Cafe Kinesi'],
-        images: article.image ? [
+        publishedTime: post.publishedAt,
+        authors: [post.author?.name || 'Cafe Kinesi'],
+        images: post.mainImage ? [
           {
-            url: article.image,
+            url: post.mainImage,
             width: 1200,
             height: 630,
-            alt: article.title,
+            alt: post.title,
           }
         ] : ['/og-image.jpg'],
         siteName: 'Cafe Kinesi',
       },
       twitter: {
         card: 'summary_large_image',
-        title: article.title,
-        description: article.excerpt || `${article.title}に関する記事です。`,
-        images: article.image ? [article.image] : ['/og-image.jpg'],
+        title: post.title,
+        description: post.excerpt || post.tldr || `${post.title}に関する記事です。`,
+        images: post.mainImage ? [post.mainImage] : ['/og-image.jpg'],
       },
       alternates: {
         canonical: `https://cafe-kinesi.com/blog/${slug}`,
@@ -128,28 +105,34 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
 export default async function BlogPage({ params }: BlogPageProps) {
   const { slug } = await params;
 
-  // 記事が存在しない場合は404を表示
-  if (!localArticles[slug]) {
+  try {
+    // Sanityから記事データを取得
+    const post = await client.fetch(BLOG_POST_BY_SLUG_QUERY, { slug });
+
+    // 記事が存在しない場合は404を表示
+    if (!post) {
+      notFound();
+    }
+
+    return (
+      <div className="min-h-screen bg-white">
+        <Header />
+        <main>
+          <ArticleJsonLd
+            title={post.title}
+            description={post.excerpt || post.tldr}
+            image={post.mainImage}
+            publishedAt={post.publishedAt}
+            author={post.author?.name}
+            url={`https://cafe-kinesi.com/blog/${slug}`}
+          />
+          <BlogPost slug={slug} />
+        </main>
+        <Footer />
+      </div>
+    );
+  } catch (error) {
+    console.error('ブログページ生成エラー:', error);
     notFound();
   }
-
-  const article = localArticles[slug];
-
-  return (
-    <div className="min-h-screen bg-white">
-      <Header />
-      <main>
-        <ArticleJsonLd
-          title={article.title}
-          description={article.excerpt}
-          image={article.image}
-          publishedAt={article.publishedAt}
-          author={article.author?.name}
-          url={`https://cafe-kinesi.com/blog/${slug}`}
-        />
-        <BlogPost slug={slug} />
-      </main>
-      <Footer />
-    </div>
-  );
 }
