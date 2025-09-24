@@ -129,12 +129,21 @@ export default async function BlogPage({ params }: BlogPageProps) {
     // データの正規化と処理
     const processedPost = { ...post };
 
+    // slugの正規化（文字列として確保）
+    if (typeof processedPost.slug !== 'string') {
+      processedPost.slug = slug;  // パラメータから取得したslugを使用
+    }
+
     // mainImageの処理
     console.log('Processing mainImage...');
     if (post.mainImage && typeof post.mainImage === 'object') {
       // mainImageが適切な形式か確認
       if (!post.mainImage._type || !post.mainImage.asset) {
         processedPost.mainImage = null;
+      } else {
+        // getImageUrl関数を使ってURLを生成
+        const { getImageUrl } = await import('@/lib/sanity');
+        processedPost.mainImage = getImageUrl(post.mainImage) || null;
       }
     }
 
@@ -179,10 +188,10 @@ export default async function BlogPage({ params }: BlogPageProps) {
             <ArticleJsonLd
               title={processedPost.title || 'Blog Post'}
               description={processedPost.excerpt || processedPost.tldr || ''}
-              image={processedPost.mainImage || undefined}
+              image={typeof processedPost.mainImage === 'string' ? processedPost.mainImage : undefined}
               publishedAt={processedPost.publishedAt || new Date().toISOString()}
               author={processedPost.author?.name}
-              url={`https://cafe-kinesi.com/blog/${slug}`}
+              url={`https://cafe-kinesi.com/blog/${typeof processedPost.slug === 'string' ? processedPost.slug : slug}`}
             />
             <BlogPostServer post={processedPost} />
           </main>
