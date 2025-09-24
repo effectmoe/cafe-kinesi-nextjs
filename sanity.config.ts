@@ -40,10 +40,6 @@ export default defineConfig({
 
   // ドキュメントアクション - プロダクションプレビューを有効化
   document: {
-    actions: (prev, {schemaType}) => {
-      // プレビューボタンを表示
-      return prev
-    },
     productionUrl: async (prev, context) => {
       const {document} = context
 
