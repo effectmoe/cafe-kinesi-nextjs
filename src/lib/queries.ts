@@ -99,7 +99,7 @@ export const BLOG_POST_BY_SLUG_QUERY = `
   *[_type == "blogPost" && slug.current == $slug][0] {
     _id,
     title,
-    slug,
+    "slug": slug.current,
     excerpt,
     tldr,
     mainImage,
@@ -125,7 +125,7 @@ export const BLOG_POST_PREVIEW_QUERY = `
     _id,
     _rev,
     title,
-    slug,
+    "slug": slug.current,
     excerpt,
     tldr,
     mainImage,
