@@ -17,9 +17,41 @@ export default defineConfig({
   plugins: [
     structureTool(),
     presentationTool({
+      resolve: {
+        locations: {
+          blogPost: {
+            select: {
+              title: 'title',
+              slug: 'slug.current',
+            },
+            resolve: (doc) => ({
+              locations: [
+                {
+                  title: doc?.title || 'Untitled',
+                  href: `/blog/${doc?.slug}`
+                }
+              ]
+            })
+          },
+          news: {
+            select: {
+              title: 'title',
+              slug: 'slug.current',
+            },
+            resolve: (doc) => ({
+              locations: [
+                {
+                  title: doc?.title || 'Untitled',
+                  href: `/news/${doc?.slug}`
+                }
+              ]
+            })
+          }
+        }
+      },
       previewUrl: {
         origin: 'https://cafe-kinesi-nextjs.vercel.app',
-        previewMode: {
+        draftMode: {
           enable: '/api/enable-draft',
         },
       },
