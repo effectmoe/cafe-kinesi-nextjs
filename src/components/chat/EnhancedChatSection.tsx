@@ -30,13 +30,14 @@ export function EnhancedChatSection() {
     // セッションID生成
     setSessionId(`session-${Date.now()}`);
 
-    // ウェルカムメッセージ
-    if (chatConfig?.config?.chatUI?.welcomeMessage) {
-      setMessages([{
-        role: 'assistant',
-        content: chatConfig.config.chatUI.welcomeMessage
-      }]);
-    }
+    // ウェルカムメッセージ（フォールバック対応）
+    const welcomeMessage = chatConfig?.config?.chatUI?.welcomeMessage ||
+      'こんにちは！Cafe Kinesiのサポートチャットです。ウェルネス、瞑想、ヨガに関するご質問にお答えします。';
+
+    setMessages([{
+      role: 'assistant',
+      content: welcomeMessage
+    }]);
   }, [chatConfig]);
 
   const sendMessage = async (messageText?: string) => {
@@ -81,12 +82,40 @@ export function EnhancedChatSection() {
     }
   };
 
-  if (chatConfig.loading) {
-    return <div className="flex items-center justify-center p-8">読み込み中...</div>;
-  }
+  // フォールバック設定
+  const defaultConfig = {
+    chatUI: {
+      title: 'Cafe Kinesiサポート',
+      welcomeMessage: 'こんにちは！Cafe Kinesiのサポートチャットです。ウェルネス、瞑想、ヨガに関するご質問にお答えします。',
+      placeholder: 'ご質問をお聞かせください...',
+      primaryColor: '#8B5A3C'
+    },
+    quickQuestions: [
+      {
+        icon: '🧘',
+        label: '瞑想について',
+        question: '瞑想を始めたいのですが、初心者でもできる簡単な方法はありますか？'
+      },
+      {
+        icon: '🍃',
+        label: '営業時間',
+        question: 'Cafe Kinesiの営業時間を教えてください。'
+      },
+      {
+        icon: '🌸',
+        label: 'アロマの効果',
+        question: 'アロマテラピーにはどのような効果がありますか？'
+      },
+      {
+        icon: '🥗',
+        label: 'おすすめメニュー',
+        question: '健康的でおすすめのメニューはありますか？'
+      }
+    ]
+  };
 
-  const config = chatConfig.config || {};
-  const ui = config.chatUI || {};
+  const config = chatConfig.config || defaultConfig;
+  const ui = config.chatUI || defaultConfig.chatUI;
 
   return (
     <div
