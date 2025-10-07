@@ -25,7 +25,18 @@ export default defineConfig({
         draftMode: {
           enable: '/api/draft',
         },
+        previewMode: {
+          enable: '/api/preview-mode/enable',
+          disable: '/api/preview-mode/disable',
+        },
       },
+      // Chrome拡張機能の干渉を回避
+      allowOrigins: [
+        'http://localhost:3000',
+        'http://localhost:3333',
+        'https://cafekinesi-nextjs.vercel.app',
+        'https://cafekinesi.sanity.studio',
+      ],
       resolve: {
         locations: {
           blogPost: {

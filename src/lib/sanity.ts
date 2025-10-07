@@ -71,7 +71,7 @@ export const client = createClient({
   useCdn: process.env.NODE_ENV === 'production',
   perspective: 'published',
   stega: {
-    enabled: process.env.NODE_ENV === 'development',
+    enabled: true, // Visual Editing用に常に有効化
     studioUrl: process.env.NEXT_PUBLIC_SANITY_STUDIO_URL || 'https://cafekinesi.sanity.studio',
   },
 })

@@ -14,6 +14,12 @@ function hasProblematicExtensions() {
     '__adblockActive',
   ]
 
+  // Chrome拡張機能のランタイムチェック
+  if ((window as any).chrome && (window as any).chrome.runtime && (window as any).chrome.runtime.id) {
+    console.log('拡張機能が検出されました:', (window as any).chrome.runtime.id)
+    return true
+  }
+
   return suspiciousGlobals.some(global => global in window)
 }
 
@@ -24,6 +30,13 @@ export default function LiveVisualEditing() {
   const maxErrors = 3
 
   useEffect(() => {
+    // iframe内でのみ有効化
+    const isInIframe = window !== window.parent
+    if (!isInIframe) {
+      console.log('Visual Editing: Not in iframe, skipping initialization')
+      return
+    }
+
     // Chrome拡張機能のチェック
     if (hasProblematicExtensions()) {
       setExtensionWarning(true)
@@ -34,10 +47,19 @@ export default function LiveVisualEditing() {
       )
     }
 
-    // PostMessageエラーのハンドリング
+    // 拡張機能エラーの無視
     const handleError = (event: ErrorEvent) => {
+      // content-all.js エラーを無視
+      if (event.filename && event.filename.includes('content-all.js')) {
+        event.preventDefault()
+        console.log('拡張機能エラーを無視しました')
+        return
+      }
+
       if (event.message?.includes('postMessage') ||
-          event.message?.includes('cross-origin')) {
+          event.message?.includes('cross-origin') ||
+          event.message?.includes('Receiving end does not exist')) {
+        event.preventDefault()
         errorCountRef.current++
 
         if (errorCountRef.current > maxErrors) {
@@ -68,15 +90,25 @@ export default function LiveVisualEditing() {
       try {
         const { enableVisualEditing } = await import('@sanity/visual-editing')
 
-        // Visual Editingを有効化
+        // Visual Editingを有効化（参考資料に基づく設定）
         const cleanup = enableVisualEditing({
-          refresh: (payload) => {
-            // リフレッシュ処理
-            if (payload.source === 'mutation') {
-              window.location.reload()
-              return false
-            }
-            return false
+          history: {
+            subscribe: (callback) => {
+              const handlePopState = () => {
+                callback({
+                  type: 'push',
+                  url: window.location.href,
+                })
+              }
+              window.addEventListener('popstate', handlePopState)
+              return () => window.removeEventListener('popstate', handlePopState)
+            },
+            update: (update) => {
+              if (update.type === 'push' || update.type === 'replace') {
+                const method = update.type === 'push' ? 'pushState' : 'replaceState'
+                window.history[method](null, '', update.url)
+              }
+            },
           },
         })
 
