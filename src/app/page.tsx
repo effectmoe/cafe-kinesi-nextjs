@@ -4,6 +4,7 @@ import AlbumGrid from "@/components/AlbumGrid";
 import BlogSection from "@/components/BlogSection";
 import SocialLinks from "@/components/SocialLinks";
 import Footer from "@/components/Footer";
+import { EnhancedChatSection } from "@/components/chat/EnhancedChatSection";
 
 // ISR（Incremental Static Regeneration）設定
 // 1分ごとに再生成（開発中は短く設定）
@@ -30,6 +31,7 @@ export default async function HomePage() {
       </main>
       <SocialLinks />
       <Footer />
+      <EnhancedChatSection />
     </div>
   );
 }
