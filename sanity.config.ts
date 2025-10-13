@@ -3,6 +3,7 @@ import {structureTool} from 'sanity/structure'
 import {presentationTool} from 'sanity/presentation'
 import {schemaTypes} from './schemas'
 import {defaultDocumentNode} from './sanity/structure'
+import {extractTextAction} from './sanity/actions/extractTextAction'
 
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'e4aqw590'
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production'
@@ -94,7 +95,13 @@ export default defineConfig({
   // ドキュメントアクション - デフォルトアクションを使用
   document: {
     // デフォルトのパブリッシュアクションを使用
-    actions: (prev) => prev,
+    actions: (prev, context) => {
+      // Add extract text action for knowledgeBase documents
+      if (context.schemaType === 'knowledgeBase') {
+        return [...prev, extractTextAction]
+      }
+      return prev
+    },
     productionUrl: async (prev, context) => {
       const {document} = context
 
