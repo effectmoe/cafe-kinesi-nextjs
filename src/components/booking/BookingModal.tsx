@@ -131,13 +131,13 @@ export default function BookingModal({ isOpen, onClose, event }: BookingModalPro
           borderRadius: '8px',
           boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
           width: '100%',
-          maxWidth: '28rem',
+          maxWidth: '500px',
           maxHeight: '85vh',
           overflowY: 'auto',
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="p-6">
+        <div style={{ padding: '24px' }}>
           {/* Header */}
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-2xl font-bold text-gray-900">講座予約</h2>
