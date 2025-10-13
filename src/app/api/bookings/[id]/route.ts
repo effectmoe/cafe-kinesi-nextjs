@@ -1,14 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { previewClient } from '@/lib/sanity'
 
-interface RouteParams {
-  params: {
-    id: string
-  }
-}
-
 // GET /api/bookings/[id] - Get a specific booking
-export async function GET(request: NextRequest, { params }: RouteParams) {
+export async function GET(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  const params = await context.params
   try {
     const { id } = params
 
@@ -56,7 +54,11 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 }
 
 // PATCH /api/bookings/[id] - Update a booking
-export async function PATCH(request: NextRequest, { params }: RouteParams) {
+export async function PATCH(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  const params = await context.params
   try {
     const { id } = params
     const body = await request.json()
@@ -114,7 +116,11 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 }
 
 // DELETE /api/bookings/[id] - Delete a booking (or mark as cancelled)
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
+export async function DELETE(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  const params = await context.params
   try {
     const { id } = params
     const { searchParams } = new URL(request.url)
