@@ -5,6 +5,7 @@ import { format, parse, startOfWeek, getDay } from 'date-fns'
 import ja from 'date-fns/locale/ja'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import { useEffect, useState } from 'react'
+import BookingModal from '@/components/booking/BookingModal'
 
 const locales = { ja }
 
@@ -31,6 +32,8 @@ interface Event {
 export default function FullCalendar() {
   const [events, setEvents] = useState<Event[]>([])
   const [view, setView] = useState<View>('month')
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   useEffect(() => {
     // TODO: Sanityから予約データを取得
@@ -72,6 +75,16 @@ export default function FullCalendar() {
     setEvents(dummyEvents)
   }, [])
 
+  const handleSelectEvent = (event: Event) => {
+    setSelectedEvent(event)
+    setIsModalOpen(true)
+  }
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false)
+    setSelectedEvent(null)
+  }
+
   const eventStyleGetter = (event: Event) => {
     let backgroundColor = '#8B5A3C'
 
@@ -102,6 +115,7 @@ export default function FullCalendar() {
         color: 'white',
         border: '0px',
         display: 'block',
+        cursor: 'pointer',
       },
     }
   }
@@ -171,6 +185,7 @@ export default function FullCalendar() {
           culture="ja"
           view={view}
           onView={setView}
+          onSelectEvent={handleSelectEvent}
           views={['month', 'week', 'day', 'agenda']}
           eventPropGetter={eventStyleGetter}
           messages={{
@@ -188,6 +203,12 @@ export default function FullCalendar() {
           }}
         />
       </div>
+
+      <BookingModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        event={selectedEvent || undefined}
+      />
 
       <style jsx global>{`
         .rbc-calendar {
