@@ -6,6 +6,11 @@ import event from './event'
 import blogPost from './blogPost'
 import author from './author'
 
+// Course & Booking schemas
+import instructor from './instructor'
+import course from './course'
+import booking from './booking'
+
 // AI Chat & RAG schemas
 import chatConfiguration from './chat/chatConfiguration'
 import aiGuardrails from './ai/aiGuardrails'
@@ -20,6 +25,10 @@ export const schemaTypes = [
   event,
   blogPost,
   author,
+  // Course & Booking
+  instructor,
+  course,
+  booking,
   // AI Chat & RAG
   chatConfiguration,
   aiGuardrails,
