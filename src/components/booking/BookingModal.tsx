@@ -110,12 +110,31 @@ export default function BookingModal({ isOpen, onClose, event }: BookingModalPro
 
   return (
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
-      style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '16px',
+        zIndex: 9999,
+      }}
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[85vh] overflow-y-auto mx-auto"
+        style={{
+          backgroundColor: 'white',
+          borderRadius: '8px',
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+          width: '100%',
+          maxWidth: '28rem',
+          maxHeight: '85vh',
+          overflowY: 'auto',
+        }}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="p-6">
