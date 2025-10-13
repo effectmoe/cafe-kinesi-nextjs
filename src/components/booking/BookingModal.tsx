@@ -137,33 +137,70 @@ export default function BookingModal({ isOpen, onClose, event }: BookingModalPro
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div style={{ padding: '24px' }}>
+        <div style={{ padding: '28px' }}>
           {/* Header */}
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-bold text-gray-900">講座予約</h2>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+            <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#1a1a1a', margin: 0 }}>講座予約</h2>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 transition-colors"
+              style={{
+                width: '32px',
+                height: '32px',
+                borderRadius: '8px',
+                border: 'none',
+                backgroundColor: 'transparent',
+                color: '#9ca3af',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'all 0.2s',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#f3f4f6'
+                e.currentTarget.style.color = '#4b5563'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent'
+                e.currentTarget.style.color = '#9ca3af'
+              }}
               aria-label="閉じる"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
 
           {/* Event Details */}
-          <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">{event.title}</h3>
-            <div className="space-y-1 text-sm text-gray-600">
-              <p>📅 {format(event.start, 'yyyy年M月d日(E)', { locale: ja })}</p>
-              <p>
+          <div style={{
+            marginBottom: '28px',
+            padding: '20px',
+            background: 'linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%)',
+            borderRadius: '12px',
+            border: '1px solid #e5e7eb'
+          }}>
+            <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#1a1a1a', marginBottom: '12px' }}>
+              {event.title}
+            </h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>
+                📅 {format(event.start, 'yyyy年M月d日(E)', { locale: ja })}
+              </p>
+              <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>
                 🕐 {format(event.start, 'HH:mm')} - {format(event.end, 'HH:mm')}
               </p>
               {event.resource && (
                 <>
-                  <p>👤 講師: {event.resource.instructor}</p>
-                  <p className={isFull ? 'text-red-600 font-semibold' : 'text-green-600'}>
+                  <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>
+                    👤 講師: {event.resource.instructor}
+                  </p>
+                  <p style={{
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: isFull ? '#dc2626' : '#16a34a',
+                    margin: 0
+                  }}>
                     {isFull ? '満席' : `残り${availableSpots}席`}
                   </p>
                 </>
@@ -172,13 +209,30 @@ export default function BookingModal({ isOpen, onClose, event }: BookingModalPro
           </div>
 
           {isFull ? (
-            <div className="text-center py-8">
-              <p className="text-red-600 font-semibold mb-4">
+            <div style={{ textAlign: 'center', padding: '40px 20px' }}>
+              <p style={{ color: '#ef4444', fontWeight: '600', marginBottom: '20px', fontSize: '15px' }}>
                 申し訳ございません。この講座は満席です。
               </p>
               <button
                 onClick={onClose}
-                className="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+                style={{
+                  padding: '12px 32px',
+                  border: 'none',
+                  borderRadius: '10px',
+                  fontSize: '15px',
+                  fontWeight: '600',
+                  color: 'white',
+                  backgroundColor: '#6b7280',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  outline: 'none'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#4b5563'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = '#6b7280'
+                }}
               >
                 閉じる
               </button>
@@ -186,10 +240,19 @@ export default function BookingModal({ isOpen, onClose, event }: BookingModalPro
           ) : (
             <>
               {/* Booking Form */}
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 <div>
-                  <label htmlFor="customerName" className="block text-sm font-medium text-gray-700 mb-1">
-                    お名前 <span className="text-red-500">*</span>
+                  <label
+                    htmlFor="customerName"
+                    style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      color: '#374151',
+                      marginBottom: '8px'
+                    }}
+                  >
+                    お名前 <span style={{ color: '#ef4444' }}>*</span>
                   </label>
                   <input
                     type="text"
@@ -198,14 +261,40 @@ export default function BookingModal({ isOpen, onClose, event }: BookingModalPro
                     value={formData.customerName}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8B5A3C] focus:border-transparent"
                     placeholder="山田 太郎"
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      border: '2px solid #e5e7eb',
+                      borderRadius: '10px',
+                      fontSize: '15px',
+                      transition: 'all 0.2s',
+                      outline: 'none',
+                      boxSizing: 'border-box'
+                    }}
+                    onFocus={(e) => {
+                      e.currentTarget.style.borderColor = '#8B5A3C'
+                      e.currentTarget.style.boxShadow = '0 0 0 3px rgba(139, 90, 60, 0.1)'
+                    }}
+                    onBlur={(e) => {
+                      e.currentTarget.style.borderColor = '#e5e7eb'
+                      e.currentTarget.style.boxShadow = 'none'
+                    }}
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="customerEmail" className="block text-sm font-medium text-gray-700 mb-1">
-                    メールアドレス <span className="text-red-500">*</span>
+                  <label
+                    htmlFor="customerEmail"
+                    style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      color: '#374151',
+                      marginBottom: '8px'
+                    }}
+                  >
+                    メールアドレス <span style={{ color: '#ef4444' }}>*</span>
                   </label>
                   <input
                     type="email"
@@ -214,14 +303,40 @@ export default function BookingModal({ isOpen, onClose, event }: BookingModalPro
                     value={formData.customerEmail}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8B5A3C] focus:border-transparent"
                     placeholder="example@email.com"
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      border: '2px solid #e5e7eb',
+                      borderRadius: '10px',
+                      fontSize: '15px',
+                      transition: 'all 0.2s',
+                      outline: 'none',
+                      boxSizing: 'border-box'
+                    }}
+                    onFocus={(e) => {
+                      e.currentTarget.style.borderColor = '#8B5A3C'
+                      e.currentTarget.style.boxShadow = '0 0 0 3px rgba(139, 90, 60, 0.1)'
+                    }}
+                    onBlur={(e) => {
+                      e.currentTarget.style.borderColor = '#e5e7eb'
+                      e.currentTarget.style.boxShadow = 'none'
+                    }}
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="customerPhone" className="block text-sm font-medium text-gray-700 mb-1">
-                    電話番号 <span className="text-red-500">*</span>
+                  <label
+                    htmlFor="customerPhone"
+                    style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      color: '#374151',
+                      marginBottom: '8px'
+                    }}
+                  >
+                    電話番号 <span style={{ color: '#ef4444' }}>*</span>
                   </label>
                   <input
                     type="tel"
@@ -230,13 +345,39 @@ export default function BookingModal({ isOpen, onClose, event }: BookingModalPro
                     value={formData.customerPhone}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8B5A3C] focus:border-transparent"
                     placeholder="090-1234-5678"
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      border: '2px solid #e5e7eb',
+                      borderRadius: '10px',
+                      fontSize: '15px',
+                      transition: 'all 0.2s',
+                      outline: 'none',
+                      boxSizing: 'border-box'
+                    }}
+                    onFocus={(e) => {
+                      e.currentTarget.style.borderColor = '#8B5A3C'
+                      e.currentTarget.style.boxShadow = '0 0 0 3px rgba(139, 90, 60, 0.1)'
+                    }}
+                    onBlur={(e) => {
+                      e.currentTarget.style.borderColor = '#e5e7eb'
+                      e.currentTarget.style.boxShadow = 'none'
+                    }}
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="notes"
+                    style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      color: '#374151',
+                      marginBottom: '8px'
+                    }}
+                  >
                     備考・ご質問
                   </label>
                   <textarea
@@ -245,29 +386,100 @@ export default function BookingModal({ isOpen, onClose, event }: BookingModalPro
                     value={formData.notes}
                     onChange={handleChange}
                     rows={3}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8B5A3C] focus:border-transparent resize-none"
                     placeholder="アレルギーや配慮が必要な事項があればお書きください"
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      border: '2px solid #e5e7eb',
+                      borderRadius: '10px',
+                      fontSize: '15px',
+                      transition: 'all 0.2s',
+                      outline: 'none',
+                      resize: 'none',
+                      fontFamily: 'inherit',
+                      boxSizing: 'border-box'
+                    }}
+                    onFocus={(e) => {
+                      e.currentTarget.style.borderColor = '#8B5A3C'
+                      e.currentTarget.style.boxShadow = '0 0 0 3px rgba(139, 90, 60, 0.1)'
+                    }}
+                    onBlur={(e) => {
+                      e.currentTarget.style.borderColor = '#e5e7eb'
+                      e.currentTarget.style.boxShadow = 'none'
+                    }}
                   />
                 </div>
 
                 {error && (
-                  <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                    <p className="text-sm text-red-600">{error}</p>
+                  <div style={{
+                    padding: '14px 16px',
+                    backgroundColor: '#fef2f2',
+                    border: '2px solid #fecaca',
+                    borderRadius: '10px'
+                  }}>
+                    <p style={{ fontSize: '14px', color: '#dc2626', margin: 0 }}>{error}</p>
                   </div>
                 )}
 
-                <div className="flex gap-3 pt-4">
+                <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
                   <button
                     type="button"
                     onClick={onClose}
-                    className="flex-1 px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium"
+                    style={{
+                      flex: 1,
+                      padding: '14px 24px',
+                      border: '2px solid #e5e7eb',
+                      borderRadius: '10px',
+                      fontSize: '15px',
+                      fontWeight: '600',
+                      color: '#374151',
+                      backgroundColor: 'white',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      outline: 'none'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = '#d1d5db'
+                      e.currentTarget.style.backgroundColor = '#f9fafb'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = '#e5e7eb'
+                      e.currentTarget.style.backgroundColor = 'white'
+                    }}
                   >
                     キャンセル
                   </button>
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="flex-1 px-6 py-3 bg-[#8B5A3C] text-white rounded-lg hover:bg-[#6B4A2C] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{
+                      flex: 1,
+                      padding: '14px 24px',
+                      border: 'none',
+                      borderRadius: '10px',
+                      fontSize: '15px',
+                      fontWeight: '600',
+                      color: 'white',
+                      backgroundColor: isSubmitting ? '#9ca3af' : '#8B5A3C',
+                      cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                      transition: 'all 0.2s',
+                      outline: 'none',
+                      boxShadow: isSubmitting ? 'none' : '0 4px 6px -1px rgba(139, 90, 60, 0.2), 0 2px 4px -1px rgba(139, 90, 60, 0.1)'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isSubmitting) {
+                        e.currentTarget.style.backgroundColor = '#6B4A2C'
+                        e.currentTarget.style.transform = 'translateY(-1px)'
+                        e.currentTarget.style.boxShadow = '0 6px 10px -1px rgba(139, 90, 60, 0.3), 0 4px 6px -1px rgba(139, 90, 60, 0.15)'
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isSubmitting) {
+                        e.currentTarget.style.backgroundColor = '#8B5A3C'
+                        e.currentTarget.style.transform = 'translateY(0)'
+                        e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(139, 90, 60, 0.2), 0 2px 4px -1px rgba(139, 90, 60, 0.1)'
+                      }
+                    }}
                   >
                     {isSubmitting ? '送信中...' : '予約する'}
                   </button>
