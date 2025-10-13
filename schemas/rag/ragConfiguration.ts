@@ -38,7 +38,7 @@ export default {
           title: '類似度閾値',
           type: 'number',
           validation: (Rule: any) => Rule.min(0).max(1),
-          initialValue: 0.75
+          initialValue: 0.3
         },
         {
           name: 'chunkSize',
@@ -98,5 +98,23 @@ export default {
         }
       ]
     }
-  ]
+  ],
+  preview: {
+    select: {
+      title: 'name',
+      active: 'active',
+      vectorEnabled: 'vectorSearch.enabled',
+      webEnabled: 'webSearch.enabled'
+    },
+    prepare({title, active, vectorEnabled, webEnabled}: {title: string, active: boolean, vectorEnabled: boolean, webEnabled: boolean}) {
+      const features = [];
+      if (vectorEnabled) features.push('Vector');
+      if (webEnabled) features.push('Web');
+
+      return {
+        title: title,
+        subtitle: `${features.join(' + ')} - ${active ? '有効' : '無効'}`
+      }
+    }
+  }
 }

@@ -56,5 +56,17 @@ export default {
         }
       ]
     }
-  ]
+  ],
+  preview: {
+    select: {
+      title: 'name',
+      active: 'active'
+    },
+    prepare({title, active}: {title: string, active: boolean}) {
+      return {
+        title: title,
+        subtitle: active ? '有効' : '無効'
+      }
+    }
+  }
 }

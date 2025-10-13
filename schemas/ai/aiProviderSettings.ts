@@ -35,5 +35,18 @@ export default {
       type: 'array',
       of: [{ type: 'string' }]
     }
-  ]
+  ],
+  preview: {
+    select: {
+      title: 'name',
+      provider: 'provider',
+      active: 'active'
+    },
+    prepare({title, provider, active}: {title: string, provider: string, active: boolean}) {
+      return {
+        title: title,
+        subtitle: `${provider} - ${active ? '有効' : '無効'}`
+      }
+    }
+  }
 }
