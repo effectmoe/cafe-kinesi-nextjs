@@ -45,7 +45,7 @@ const coursesQuery = `
     courseType,
     price,
     duration,
-    "childCourses": *[_type == "course" && references(^._id) && isActive == true] | order(order asc) {
+    "childCourses": *[_type == "course" && parentCourse._ref == ^._id && isActive == true] | order(order asc) {
       _id,
       title,
       subtitle,
