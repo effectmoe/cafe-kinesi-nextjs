@@ -198,6 +198,53 @@ export default defineType({
       validation: (Rule) => Rule.required().min(0),
       group: 'basic',
     }),
+
+    // ========== 階層構造フィールド ==========
+    defineField({
+      name: 'courseType',
+      title: '講座タイプ',
+      type: 'string',
+      options: {
+        list: [
+          { title: '主要講座', value: 'main' },
+          { title: '補助講座', value: 'auxiliary' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'main',
+      validation: (Rule) => Rule.required(),
+      description: 'この講座が主要講座か補助講座かを選択してください',
+      group: 'basic',
+    }),
+    defineField({
+      name: 'parentCourse',
+      title: '親講座',
+      type: 'reference',
+      to: [{ type: 'course' }],
+      description: '補助講座の場合、親となる主要講座を選択してください',
+      group: 'basic',
+      options: {
+        filter: 'courseType == "main"',
+        disableNew: true,
+      },
+      hidden: ({ document }) => document?.courseType !== 'auxiliary',
+      validation: (Rule) => Rule.custom((current, context) => {
+        const courseType = (context.document as any)?.courseType
+
+        // 補助講座の場合は親講座が必須
+        if (courseType === 'auxiliary' && !current) {
+          return '補助講座の場合、親講座を選択してください'
+        }
+
+        // 自分自身を親に設定できないようにする
+        if (current?._ref === (context.document as any)?._id) {
+          return '自分自身を親講座に設定できません'
+        }
+
+        return true
+      }),
+    }),
+
     defineField({
       name: 'isActive',
       title: '公開状態',
@@ -608,12 +655,20 @@ export default defineType({
       media: 'image',
       order: 'order',
       isActive: 'isActive',
+      courseType: 'courseType',
+      parentTitle: 'parentCourse.title',
     },
     prepare(selection) {
-      const { title, subtitle, media, order, isActive } = selection
+      const { title, subtitle, media, order, isActive, courseType, parentTitle } = selection
+
+      // 補助講座の場合はインデント表示
+      const prefix = courseType === 'auxiliary' ? '  └ ' : ''
+      const typeLabel = courseType === 'auxiliary' ? '補助' : '主要'
+      const parentInfo = parentTitle ? ` (親: ${parentTitle})` : ''
+
       return {
-        title: `${order}. ${title}`,
-        subtitle: `${subtitle} ${!isActive ? '(非公開)' : ''}`,
+        title: `${prefix}${order}. ${title}`,
+        subtitle: `[${typeLabel}] ${subtitle}${parentInfo} ${!isActive ? '(非公開)' : ''}`,
         media,
       }
     },

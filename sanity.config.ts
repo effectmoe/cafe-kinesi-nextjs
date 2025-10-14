@@ -2,7 +2,7 @@ import {defineConfig} from 'sanity'
 import {structureTool} from 'sanity/structure'
 import {presentationTool} from 'sanity/presentation'
 import {schemaTypes} from './schemas'
-import {defaultDocumentNode} from './sanity/structure'
+import {defaultDocumentNode, structure} from './sanity/structure'
 import {extractTextAction} from './sanity/actions/extractTextAction'
 
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'e4aqw590'
@@ -18,6 +18,7 @@ export default defineConfig({
   plugins: [
     structureTool({
       defaultDocumentNode,
+      structure,
     }),
     presentationTool({
       previewUrl: {
